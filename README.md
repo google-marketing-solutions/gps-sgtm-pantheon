@@ -19,6 +19,13 @@ real-time.
 
 See [Phoebe](./sgtm/phoebe/README.md).
 
+### Hermes
+
+**Use case**: Sending data Pub/Sub in Google Cloud to trigger decoupled events,
+in a downstream pipeline.
+
+See [Hermes](./sgtm/hermes/README.md).
+
 ## Disclaimer
 __This is not an officially supported Google product.__
 
