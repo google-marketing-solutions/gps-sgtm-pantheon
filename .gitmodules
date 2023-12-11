@@ -1,0 +1,7 @@
+[submodule "sgtm/soteria"]
+	path = sgtm/soteria
+	url = https://github.com/google-marketing-solutions/gps_soteria
+
+[submodule "sgtm/phoebe"]
+	path = sgtm/phoebe
+	url = https://github.com/google-marketing-solutions/gps-phoebe
