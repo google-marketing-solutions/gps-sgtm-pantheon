@@ -10,14 +10,14 @@ for a number of use-cases.
 **Use case**: value bidding to a secret conversion value, where the value can be
 deteremined using a look up table.
 
-See [Soteria](./sgtm/soteria/README.md).
+See [Soteria](https://github.com/google-marketing-solutions/gps_soteria).
 
 ### Phoebe
 
 **Use case**: value bidding to a conversion value that is calculated using AI in
 real-time.
 
-See [Phoebe](./sgtm/phoebe/README.md).
+See [Phoebe](https://github.com/google-marketing-solutions/gps-phoebe).
 
 ### Hermes
 
