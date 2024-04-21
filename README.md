@@ -26,6 +26,13 @@ in a downstream pipeline.
 
 See [Hermes](./sgtm/hermes/README.md).
 
+### Cerberus
+
+**Use case**: Integrate reCAPTCHA to filter bot-generated events & suspicious
+activity and improve data models by using bot-likelihood signals.
+
+See [Cerberus](https://github.com/GoogleCloudPlatform/recaptcha-enterprise-google-tag-manager).
+
 ## Disclaimer
 __This is not an officially supported Google product.__
 
