@@ -39,14 +39,14 @@ the less impact it would have on bidding.
 So our solutions improve or enhance the current standard of workflow, 
 if you look at the third step, we have two options.
 
-The first option is gPS-Apollo solution, [gPS-Apollo solution](https://github.com/JunghanYoon/gps-apollo). 
+The first option is gPS-Apollo solution,
 which you're reading now.
 
 It is using a spreadsheet to pass the conversion value, 
 think of the spreadsheet as a lookup table based on the user’s input in the form. 
 We are able to pass the conversion value using the server side GTM.
 
-The second option is [gPS-Phoebe solution](https://github.com/google-marketing-solutions/gps-phoebe).
+The second option is [gPS-Phoebe solution](https://github.com/google-marketing-solutions/gps-phoebe)
 instead of using a spreadsheet. 
 We will be using Google Cloud’s Vertex AI to be able to predict the conversion value 
 and pass it through server side GTM.
@@ -99,6 +99,8 @@ Otherwise, skip to the next section for the implementation guide.
    (e.g. the related job at the bottom. age group at the left tap 
     and the address at the top)
     ![Spreadsheet](docs/img/spreadsheet_ss.png "Spreadsheet")
+* There are [quotas and limitations](https://developers.google.com/sheets/api/limits) for Google Sheets API.
+
 
 
 ### Prepare the environment
@@ -181,7 +183,7 @@ and paste it into the spreadsheet for editor.
 
 **This is not an officially supported Google product.**
 
-*Copyright 2023 Google LLC. This solution, including any related sample code or
+*Copyright 2024 Google LLC. This solution, including any related sample code or
 data, is made available on an “as is,” “as available,” and “with all faults”
 basis, solely for illustrative purposes, and without warranty or representation
 of any kind. This solution is experimental, unsupported and provided solely for

@@ -45,29 +45,42 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_SERVER___
 
-// Enter your template code here.
-const getGoogleAuth = require("getGoogleAuth");
-const sendHttpRequest = require('sendHttpRequest');
-const setResponseBody = require('setResponseBody');
-const setResponseHeader = require('setResponseHeader');
-const setResponseStatus = require('setResponseStatus');
-const Promise = require('Promise');
-const JSON = require("JSON");
+// Copyright 2024 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
+const getGoogleAuth = require("getGoogleAuth");
+const sendHttpRequest = require("sendHttpRequest");
+const setResponseBody = require("setResponseBody");
+const setResponseHeader = require("setResponseHeader");
+const setResponseStatus = require("setResponseStatus");
+const Promise = require("Promise");
+const JSON = require("JSON");
 const logToConsole = require("logToConsole");
 
-logToConsole('age :' + data.age);
-logToConsole('address :' + data.address);
-logToConsole('job :' + data.job);
+logToConsole("age :" + data.age);
+logToConsole("address :" + data.address);
+logToConsole("job :" + data.job);
 
 const SPREADSHEET_ID = data.spreadsheet_id;
 const SHEET_NAME = data.job;
 const COLUMN_NO = data.address;
 const ROW_NO = data.age;
-const TARGET = '!' + COLUMN_NO + ROW_NO + ':' + COLUMN_NO + ROW_NO;
+const TARGET = "!" + COLUMN_NO + ROW_NO + ":" + COLUMN_NO + ROW_NO;
 
-const url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SPREADSHEET_ID + '/values/' + SHEET_NAME + TARGET;
-logToConsole('url :' + url);
+const url = "https://sheets.googleapis.com/v4/spreadsheets/" + SPREADSHEET_ID + "/values/" + SHEET_NAME + TARGET;
+logToConsole("url :" + url);
 
 
 // Get Google credentials from the service account running the container.
@@ -77,7 +90,7 @@ const auth = getGoogleAuth({
 });
 
 const requestOptions = {
-  headers: {key: 'value'},
+  headers: {key: "value"},
   method: "GET",
   authorization: auth,
   timeout: 5000,
@@ -90,7 +103,7 @@ return sendHttpRequest(url, requestOptions).then((result) => {
   setResponseHeader('cache-control', result.headers['cache-control']);
   const result_object = JSON.parse(result.body);
   const return_value = result_object.values[0][0];
-  logToConsole('return_value :' + return_value);
+  logToConsole("return_value :" + return_value);
   
   return return_value;
 });
@@ -237,21 +250,35 @@ scenarios:
 - name: Test case to show getting data from the spreadsheet behaves as expected
   code: |-
     const mockData = {
-      // Mocked field values
-      spreadsheet_id: '1XCntdqorwXKCvFeE2bh51OJB7A2jVTCtZrfKimFq2II',
+      spreadsheet_id: "abcdefghijklmn",
       age: 1,
-      address: 'A',
-      job: 'it'
+      address: "A",
+      job: "it"
     };
+
+    mock("sendHttpRequest", () => {
+      return Promise.create((resolve) => {
+        resolve({
+          "statusCode": 200,
+          "body": JSON.stringify({ "values": [["100"]]}),
+          "headers": {
+            "cache-control": "max-age=120"
+          }
+        });
+      });
+    });
 
     runCode(mockData).then((resp) => {
       assertThat(resp).isString();
       assertThat(resp).isEqualTo("100");
     });
+setup: |-
+  const JSON = require("JSON");
+  const Promise = require("Promise");
 
 
 ___NOTES___
 
-Created on 4/29/2024, 2:56:48 PM
+Created on 4/30/2024, 5:13:58 AM
 
 
