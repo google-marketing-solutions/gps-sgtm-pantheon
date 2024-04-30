@@ -19,6 +19,14 @@ real-time.
 
 See [Phoebe](https://github.com/google-marketing-solutions/gps-phoebe).
 
+### Apollo
+
+**Use case**: Get data from a Google Sheet in realtime to generate lead gen value
+for lead scoring. This value will be activated via VBB (value based bidding) to
+optimize Google Ads campaign performance
+
+See [Apollo](./sgtm/apollo/README.md).
+
 ### Hermes
 
 **Use case**: Sending data Pub/Sub in Google Cloud to trigger decoupled events,
