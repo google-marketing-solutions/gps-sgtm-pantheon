@@ -41,6 +41,16 @@ activity and improve data models by using bot-likelihood signals.
 
 See [Cerberus](https://github.com/GoogleCloudPlatform/recaptcha-enterprise-google-tag-manager).
 
+## Developer
+
+To update the git submodules run:
+
+```
+git submodule update --init --remote
+```
+
+Do not use the `--recursive` flag.
+
 ## Disclaimer
 __This is not an officially supported Google product.__
 
