@@ -258,7 +258,7 @@ This service account needs to have permission to access the Firestore data.
 
 ## Disclaimer
 
-Copyright 2022 Google LLC. This solution, including any related sample code or
+Copyright 2024 Google LLC. This solution, including any related sample code or
 data, is made available on an “as is,” “as available,” and “with all faults”
 basis, solely for illustrative purposes, and without warranty or representation
 of any kind. This solution is experimental, unsupported and provided solely for
