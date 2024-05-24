@@ -1,6 +1,6 @@
 # Artemis
 
-Get documentes from [GCP Firestore](https://firebase.google.com/docs/firestore) 
+Get documents from [Google Cloud Firestore](https://firebase.google.com/docs/firestore) 
 databases in real time for advanced tag firing, value bidding, audience creation, 
 and onsite personalisation while keeping sensitive data away from determined end 
 users and third parties.
@@ -20,32 +20,21 @@ groups, previous purchase history, and much more
 - Realtime on-site personalisation enabled by passing data back to the browser
 using sGTM's advanced tag behaviour
 
-For examples of how to set-up sGTM for these use cases see [XXX BELOW](kahaksjhdkasjhdaksdhaksjhdkasjdhkasjd).
-
-> Tip 💡: Check out [the sGTM Pantheon](
-    https://github.com/google-marketing-solutions/gps-sgtm-pantheon/tree/main)
-for more tags for different use-cases.
+For examples of how to set-up sGTM for these use cases see the example use cases Below.
 
 ## Background
 First party data is becoming ever more important to digital marketing. Marketers
 who are able to effectively use the insights and knowledge they have about their
 customers have an advantage over those who do not use this data. Accessing data
 about customers that is not immediatly available on the website is usually
-difficult though and requires significant web development and involves exposing 
-data on the website. This means many digital marketing teams do not make use of 
-the extensive data their BI teams have on their customers
+difficult though, requiring significant web development and potentially exposing 
+data on the website. As a result clients may not be using all the customer
+data they have available to them, impacting the effectiveness of their data
+activation efforts.
 
-This data is sensitive, therefore most clients would not like a determined user 
-to be able to access this information. As a result, clients will tend to either 
-use a proxy value in its place or implement a batch upload strategy using one of 
-the Google APIs. The former complicates reporting and some clients are uncomfortable 
-with this approach. The latter poses issues due to the lack of support for 
-conversion modelling, and some worry about the impact on bidding, caused by the 
-delay in reporting the conversions in batches.
-
-sGTM has feature parity for modelling with the client side JavaScript tag, it
-happens in real time, and enables pulling in external "sensitive" data, so it
-operates in the sweet spot between the two existing approaches.
+sGTM enables clients to access sensitive data, without ever exposing it within the
+browser which opens up the oppportunity for using more data and improving
+clients data activation stategies.
 
 ## Why Artemis?
 
@@ -79,8 +68,7 @@ involved, and outlines the flow. This is high level, please see
 <br>
 
 1.  A GTM web container is used to set up tagging on the site, and is configured
-    with a dataLayer event ([more details on gTag events]
-    (https://developers.google.com/tag-platform/tag-manager/datalayer#use_a_data_layer_with_event_handlers)).
+    with a dataLayer event ([more details on gTag events](https://developers.google.com/tag-platform/tag-manager/datalayer#use_a_data_layer_with_event_handlers)).
 2.  The client’s website is set up to include a user ID in the dataLayer: this
     will be used as a key to access data in Firestore. The user ID could be
     an email address (hashed or unhashed) or any other kind of ID which is
@@ -218,7 +206,7 @@ This service account needs to have permission to access the Firestore data.
 11. Save and deploy the code.
 
 
-## Example Use-cases
+## Example Use Cases
 
 ### Conditionally fire tags only for new or returning users
 
