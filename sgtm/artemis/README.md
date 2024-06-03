@@ -39,6 +39,17 @@ clients' data activation strategies.
 [Artemis](https://en.wikipedia.org/wiki/Artemis) is the Greek goddess of the hunt. 
 Like the goddess, the solution goes out hunting for data and returns with it.
 
+## Why use this tag when sGTM has a Firestore lookup feature already?
+
+sGTM has a variable type which allows you lookup data in Firestore. The key
+difference between that and Artemis is that this built-in lookup gets data from
+an attribute within a document whereas Artemis allows you to get the entire 
+document and parse out any value. This allows you to return more data in a 
+single API call, reducing costs and improving performance.
+
+If you only require a single value to be looked up, the built-in lookup would
+be best to use. 
+
 ## Implementation
 Ready to start implementing this solution? You can follow the guide below which 
 outlines how Server Side Google Tag Manager (sGTM) can be used with Firestore, 
@@ -82,7 +93,7 @@ Stringified JSON Object as a variable using the Artemis variable template:
 ![example1.png](./img/artemis_output_example.png)
 
 And here you can see this data has been cleaned up into more useable variables using
-another template:
+the extraction template provided:
 
 ![example2.png](./img/artemis_output_example_cleaned.png)
 
@@ -140,7 +151,7 @@ which sends data to the server-side container:
 #### Overview
 
 This is where the magic happens. In the server-side container the user data
-is looked up using the "[Aretmis variable template](./../src/gtm/get_document_from_firestore.tpl)”.
+is looked up using the "[Artemis variable template](./../src/gtm/get_document_from_firestore.tpl)”.
 The document is returned as a Stringified JSON object. Value can be extracted
 using the "[extraction template](./../src/gtm/extract_value_from_stringified_json_object.tpl)”.
 
@@ -175,14 +186,14 @@ This service account needs to have permission to access the Firestore data.
 
 ##### Variables in Tag Manager
 
-1. Download the [Aretmis variable template](./../src/gtm/get_document_from_firestore.tpl) 
+1. Download the [Artemis variable template](./../src/gtm/get_document_from_firestore.tpl) 
    and [extraction template](./../src/gtm/extract_value_from_stringified_json_object.tpl) 
    files. Ensure that the file extensions remain .tpl.
 2. Go to the server-side container in
    [tagmanager.google.com](https://tagmanager.google.com/).
 3. Go to templates -> new variable template.
 4. Click on the three-dot menu on the top right and choose `Import`.
-5. Select the "[Aretmis variable template](./../src/gtm/get_document_from_firestore.tpl)”
+5. Select the "[Artemis variable template](./../src/gtm/get_document_from_firestore.tpl)”
     file.
 6. Go to the permission tab and set the permissions for Firestore, ensuring you
    update the project ID.
@@ -209,19 +220,21 @@ This service account needs to have permission to access the Firestore data.
 ### Conditionally fire tags only for new or returning users
 
 1. In Firestore include a new/returning attribution with the value set to true or false
-2. Use Aretemis and the extraction variable templates to create a variable in sGTM to pull in this value
+2. Use Artemis and the extraction variable templates to create a variable in sGTM to pull in this value
 3. Create a trigger which only fires when this variable is true or false
+
+![Example trigger to fire on second transaction](./img/example_trigger_on_second_transaction.png)
 
 ### Only fire tags on second transactions
 
 1. In Firestore include a no. of transactions attribution with the value set to true or false
-2. Use Aretemis and the extraction variable templates to create a variable in sGTM to pull in this value
+2. Use Artemis and the extraction variable templates to create a variable in sGTM to pull in this value
 3. Create a trigger which only fires when this variable is > 1. 
 
 ### Add audiences to GA4 audience based on segments computed offline
 
 1. In Firestore include attributes related to audience properties (e.g. value deciles) 
-2. Use Aretemis and the extraction variable templates to create a variable in sGTM to pull in this value
+2. Use Artemis and the extraction variable templates to create a variable in sGTM to pull in this value
 3. In GA4 create a custom dimension which will be used to filter for this audience segment
 4. In sGTM add this custom dimension to the relevant tag, pulling in the variable as the value
 
@@ -235,7 +248,7 @@ This service account needs to have permission to access the Firestore data.
 ### Update your website in realtime based on audience data hosted in the cloud
 
 1. In Firestore relevant user data which will be used by the site
-2. Use Aretemis and the extraction variable templates to create a variable in sGTM to pull in this value
+2. Use Artemis and the extraction variable templates to create a variable in sGTM to pull in this value
 3. Create a [custom tag template](https://developers.google.com/tag-platform/tag-manager/templates) in
    sGTM to write data back to the using the [setCookie method](https://developers.google.com/tag-platform/tag-manager/templates/api#setcookie). 
    Include a field that can accpet the variable.
