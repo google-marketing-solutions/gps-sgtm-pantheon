@@ -25,73 +25,29 @@ detail below).
 
 ### Gather Data
 
-#### Soteria
-*Sum metrics stored in Firestore* <br/>
-**Use case**: Calculate and bid to profit or other sensitive values for online 
-transactions without exposing data
+These solutions all get data from places outside of sGTM via API calls. They 
+can be used to get data that is not available on the website dataLayer and 
+the event data sent to sGTM when the hit is sent from the client-side tag.
 
-See [Soteria](https://github.com/google-marketing-solutions/gps_soteria).
-
-#### Phoebe
-*Access model in VertexAI* <br/>
-**Use case**: Call Vertex AI in real time for LTV bidding, lead scoring, and 
-real-time audience segmentation
-
-See [Phoebe](https://github.com/google-marketing-solutions/gps-phoebe).
-
-#### Artemis
-*Get data from Firestore* <br/>
-**Use case**: Get customer data from Firestore and use it for conditional tag 
-firing, advanced metrics, audience segmentation, and real-time website 
-personalization without exposing data
-
-See [Hermes](./sgtm/hermes/README.md).
-
-#### Apollo
-*Get data from a Google sheet* <br/>
-**Use case**: Get data from a Google Sheet in realtime to generate lead gen value 
-for lead scoring. This value will be activated via VBB (value based bidding) to 
-optimize Google Ads campaign performance 
-
-See [Apollo](./sgtm/apollo/README.md).
-
-#### Cerberus
-*Get reCAPTCHA scores in sGTM* <br/>
-**Use case**: Integrates reCAPTCHA to filter bot-generated events & suspicious 
-activity. Also, improves data models by using bot-likelihood signals
-
-See [Cerberus](https://github.com/GoogleCloudPlatform/recaptcha-enterprise-google-tag-manager).
+|Solution|One-liner|Use Case|Why is it called that?|
+|---|---|---|---|
+|[Soteria](https://github.com/google-marketing-solutions/gps_soteria)|Sum metrics stored in Firestore|Calculate and bid to profit or other sensitive values for online transactions without exposing data|Goddess of safety, and deliverance and preservation from harm. Like the goddess, this project provides safety from end users to your sensitive value data (e.g. profit).|
+|[Phoebe](https://github.com/google-marketing-solutions/gps-phoebe)|Access a model in VertexAI|Call Vertex AI in real time for LTV bidding, lead scoring, and real-time audience segmentation|Godess of prediction|
+|[Artemis](./sgtm/artemis/README.md)|Get data from Firestore|Get customer data from Firestore and use it for conditional tag firing, advanced metrics, audience segmentation, and real-time website personalization without exposing data|Goddess of the hunt. Like the goddess, the solution goes out hunting for data and returns with it.|
+|[Apollo](./sgtm/apollo/README.md)|Get data from a Google sheet|Get data from a Google Sheet in realtime to generate lead gen value for lead scoring.|Greek god of knowledge, which can be stored in Sheets|
+|[Cerberus](https://github.com/GoogleCloudPlatform/recaptcha-enterprise-google-tag-manager)|Get reCAPTCHA scores in sGTM|Integrate reCAPTCHA to filter bot-generated events & suspicious activity. Also, improves data models by using bot-likelihood signals|The multi-headed dog who guards the gates of the Underworld|
 
 ### Send Data
 
-#### Hephaestus
-*Write data to Firestore* <br/>
-**Use case**: Write or edit data in Firestore for advanced bidding (e.g. new/
-returning customer, nth transaction), advanced audience, analytics, and marketing 
-data pipeline automation
+These solutions allow you to send data from sGTM to other destinations.
 
-See [Hephaestus](./sgtm/hephaestus/README.md).
+|Solution|One-liner|Use Case|Why is it called that?|
+|---|---|---|---|
+|[Hephaestus](./sgtm/hephaestus/README.md)|Write data to Firestore|Write or edit data in Firestore for advanced bidding (e.g. new/returning customer, nth transaction), advanced audience, analytics, and marketing data pipeline automation|God of fire|
+|[Chaos](./sgtm/choas/README.md)|Write data to BigQuery|Write data to BigQuery for advanced analytics, data recovery, audience creation, and marketing data pipeline automation|Chaos was the infinite void that came to be filled by the world, in the way BigQuey can be filled with data|
+|[Deipneus](./sgtm/deipneus/README.md)|Write data to first-party cookies in browser|Send first-party data back to the website. Useful for real time web personalisation and audience creation|Greek god of food, in particular bread|
+|[Hermes](./sgtm/hermes/README.md)|Send data to Pub/Sub to trigger other processes|Send data Pub/Sub in Google Cloud to trigger decoupled events, in a downstream pipeline.|The messenger god|
 
-#### Chaos
-*Write data to BigQuery* <br/>
-**Use case**: Write data to BigQuery for advanced analytics, data recovery, 
-audience creation, and marketing data pipeline automation
-
-See [Chaos](./sgtm/choas/README.md).
-
-#### Deipneus
-*Write data to first-party cookies in browser* <br/>
-**Use case**: Sends first-party  data back to the website. Useful for real time web 
-personalisation and audience creation
-
-See [Deipneus](./sgtm/deipneus/README.md).
-
-#### Hermes
-*Send data to Pub/Sub to trigger other processes* <br/>
-**Use case**: Sending data Pub/Sub in Google Cloud to trigger decoupled events,
-in a downstream pipeline.
-
-See [Hermes](./sgtm/hermes/README.md).
 
 ## Combining solutions
 
@@ -102,7 +58,7 @@ could use [Artemis](./sgtm/artemis/README.md) to get some data from Firestore
 & [Cerberus](https://github.com/GoogleCloudPlatform/recaptcha-enterprise-google-tag-manager) 
 to generate a reCAPTCHA score. These two outputs could then be used as inputs 
 to [Phoebe](https://github.com/google-marketing-solutions/gps-phoebe) which
-could call a lead scoring model hosted in Vertext AI. This score could be sent 
+could call a lead scoring model hosted in VertexAI. This score could be sent 
 to advertising platforms using sGTM's built-in tags but could also be stored in
 Firestore and/or BigQuery by [Hephaestus](./sgtm/hephaestus/README.md) and 
 [Chaos](./sgtm/choas/README.md).

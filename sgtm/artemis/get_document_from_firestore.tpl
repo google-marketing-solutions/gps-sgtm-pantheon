@@ -53,7 +53,7 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_SERVER___
 
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -73,12 +73,11 @@ ___SANDBOXED_JS_FOR_SERVER___
  * @version 1.0.0
  */
 
-const Firestore = require("Firestore");
-const Promise = require("Promise");
-const getEventData = require("getEventData");
-const logToConsole = require("logToConsole");
-const makeString = require("makeString");
-const getType = require("getType");
+const Firestore = require('Firestore');
+const Promise = require('Promise');
+const logToConsole = require('logToConsole');
+const makeString = require('makeString');
+const getType = require('getType');
 const JSON = require('JSON');
 
 /**
@@ -94,6 +93,9 @@ function getFirestoreDocument(documentId) {
     return document;
   }
 
+  // Mock API returns a function, whereas usual import is object.
+  // This logic enables support for tests within the function. See
+  // https://developers.google.com/tag-platform/tag-manager/server-side/api#mock
   const path = data.collectionId + "/" + documentId;
 
   let firestore = Firestore;
@@ -122,10 +124,7 @@ function getFirestoreDocument(documentId) {
 
 // Entry point
 const documentId = data.documentID;
-logToConsole("Document ID:", documentId);
 let document = getFirestoreDocument(documentId).then(document => {
-    logToConsole("Document:", document);
-    logToConsole("Stringified document:", JSON.stringify(document));
     return JSON.stringify(document);
 }).catch((error) => {
     logToConsole("Error", error);
@@ -210,35 +209,65 @@ ___SERVER_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "read_event_data",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "eventDataAccess",
-          "value": {
-            "type": 1,
-            "string": "any"
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
   }
 ]
 
 
 ___TESTS___
 
-scenarios: []
-setup: ''
+scenarios:
+- name: Test collectionID used in request to Firestore
+  code: |
+    const mockData = {
+      collectionId: "test-products",
+      valueCalculation: "valueQuantity",
+      zeroIfNotFound: true
+    };
+
+    mock("Firestore", () => {
+      return {
+        "read": (path, options) => {
+          assertThat(path).isEqualTo("test-products/sku1");
+          return Promise.create((resolve) => {
+            resolve({"data": {"profit": 100}});
+          });
+        }
+      };
+    });
+
+    runCode(mockData);
+setup: |-
+  const Promise = require("Promise");
+
+  /**
+   * Add mock getEventData to the test.
+   * @param {!Array<!Object>} items an array of items from the datalayer.
+   */
+  function addMockEventData(items){
+    mock("getEventData", (data) => {
+      if (data === "items") {
+        return items;
+      }
+    });
+  }
+
+  /**
+   * Add mock Firestore library to the test.
+   * @param {!Object} firestoreDocs an object representing the firestore response.
+   */
+  function addMockFirestore(firestoreDocs){
+    mock("Firestore", () => {
+      return {
+        "read": (path, options) => {
+          const sku = path.replace(mockData.collectionId + "/", "");
+          const doc = firestoreDocs[sku];
+          return Promise.create((resolve) => {
+            resolve(doc);
+          });
+        }
+      };
+    });
+  }
 
 
 ___NOTES___
