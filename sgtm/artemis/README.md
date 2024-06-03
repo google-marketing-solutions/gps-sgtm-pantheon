@@ -2,7 +2,7 @@
 
 Get documents from [Google Cloud Firestore](https://firebase.google.com/docs/firestore) 
 databases in real time for advanced tag firing, value bidding, audience creation, 
-and onsite personalisation while keeping sensitive data away from determined end 
+and onsite personalization while keeping sensitive data away from determined end 
 users and third parties.
 
 Use [Server Side Google Tag Manager (sGTM)](
@@ -12,29 +12,27 @@ potentially sensitive data. This enables multiple use cases:
 
 - Conditional tag firing e.g. for new and returning customers even when 
 guest checkout has been used
-- Supplementing onsite data with customer data from cloud, e.g. segmentation 
+- Supplementing onsite data with customer data from the cloud, e.g. segmentation 
 groups, previous purchase history, and much more
-- Generating advanced bidding metrics in conjunction with [Soteria]
-(https://github.com/google-marketing-solutions/gps_soteria) and [Phoebe]
-(https://github.com/google-marketing-solutions/gps-phoebe).
-- Realtime on-site personalisation enabled by passing data back to the browser
-using sGTM's advanced tag behaviour
+- Generating advanced bidding metrics in conjunction with [Soteria](https://github.com/google-marketing-solutions/gps_soteria) and [Phoebe](https://github.com/google-marketing-solutions/gps-phoebe).
+- Realtime on-site personalization enabled by passing data back to the browser
+using sGTM's advanced tag behavior e.g. using [Deipneus](./sgtm/deipneus/README.md).
 
-For examples of how to set-up sGTM for these use cases see the example use cases Below.
+For examples of how to set-up sGTM for these use cases see the example use cases below.
 
 ## Background
-First party data is becoming ever more important to digital marketing. Marketers
+First-party data is becoming ever more important to digital marketing. Marketers
 who are able to effectively use the insights and knowledge they have about their
 customers have an advantage over those who do not use this data. Accessing data
-about customers that is not immediatly available on the website is usually
+about customers that is not immediately available on the website is usually
 difficult though, requiring significant web development and potentially exposing 
-data on the website. As a result clients may not be using all the customer
+data on the website. As a result, clients may not be using all the customer
 data they have available to them, impacting the effectiveness of their data
 activation efforts.
 
 sGTM enables clients to access sensitive data, without ever exposing it within the
-browser which opens up the oppportunity for using more data and improving
-clients data activation stategies.
+browser which opens up the opportunity for using more data and improving
+clients' data activation strategies.
 
 ## Why Artemis?
 
@@ -45,7 +43,7 @@ Like the goddess, the solution goes out hunting for data and returns with it.
 Ready to start implementing this solution? You can follow the guide below which 
 outlines how Server Side Google Tag Manager (sGTM) can be used with Firestore, 
 to pull in sensitive data and report access it in sGTM variables which can then
-be used for the uses cases listed above.
+be used for the use cases listed above.
 
 ## Prerequisites
 
@@ -57,7 +55,7 @@ your website
 
 ## Architecture
 
-[Image 1](#image-1) provides a high level overview of the core components
+[Image 1](#image-1) provides a high-level overview of the core components
 involved, and outlines the flow. This is high level, please see
 [solution details](#solution-details) for further information.
 
@@ -73,7 +71,7 @@ involved, and outlines the flow. This is high level, please see
     will be used as a key to access data in Firestore. The user ID could be
     an email address (hashed or unhashed) or any other kind of ID which is
     available on the website, offline, and in the cloud.
-3.  When sGTM recieve the event, it will look up the data in Firestore and return
+3.  When sGTM receives the event, it will look up the data in Firestore and return
     an entire Firestore document in the form of a stringified JSON object. Further
     variables are used to extract and clean this data as required 
 4.  The updated event is sent to Google Analytics, Floodlights, or Google Ads.
@@ -83,7 +81,7 @@ Stringified JSON Object as a variable using the Artemis variable template:
 
 ![example1.png](./img/artemis_output_example.png)
 
-And here you can this data has been cleaned up into more useable variables using
+And here you can see this data has been cleaned up into more useable variables using
 another template:
 
 ![example2.png](./img/artemis_output_example_cleaned.png)
@@ -141,7 +139,7 @@ which sends data to the server-side container:
 
 #### Overview
 
-This is where the magic happens. In the server side container the user data
+This is where the magic happens. In the server-side container the user data
 is looked up using the "[Aretmis variable template](./../src/gtm/get_document_from_firestore.tpl)”.
 The document is returned as a Stringified JSON object. Value can be extracted
 using the "[extraction template](./../src/gtm/extract_value_from_stringified_json_object.tpl)”.
@@ -150,11 +148,11 @@ using the "[extraction template](./../src/gtm/extract_value_from_stringified_jso
 
 ##### Auth
 
-If the server side container is deployed to App Engine or Cloud Run, then Google
+If the server-side container is deployed to App Engine or Cloud Run, then Google
 Tag Manager will use the service account attached to the instance for connecting
 to Firestore.
 
-If the server side container is deployed in a different Cloud provider to Google
+If the server-side container is deployed in a different Cloud provider to Google
 Cloud, please [follow these additional instructions](
 https://developers.google.com/tag-platform/tag-manager/server-side/manual-setup-guide#optional_include_google_cloud_credentials)
 to attach a Google Cloud service account to the deployment.
@@ -180,7 +178,7 @@ This service account needs to have permission to access the Firestore data.
 1. Download the [Aretmis variable template](./../src/gtm/get_document_from_firestore.tpl) 
    and [extraction template](./../src/gtm/extract_value_from_stringified_json_object.tpl) 
    files. Ensure that the file extensions remain .tpl.
-2. Go to the server side container in
+2. Go to the server-side container in
    [tagmanager.google.com](https://tagmanager.google.com/).
 3. Go to templates -> new variable template.
 4. Click on the three-dot menu on the top right and choose `Import`.
