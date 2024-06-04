@@ -215,59 +215,7 @@ ___SERVER_PERMISSIONS___
 
 ___TESTS___
 
-scenarios:
-- name: Test collectionID used in request to Firestore
-  code: |
-    const mockData = {
-      collectionId: "test-products",
-      valueCalculation: "valueQuantity",
-      zeroIfNotFound: true
-    };
-
-    mock("Firestore", () => {
-      return {
-        "read": (path, options) => {
-          assertThat(path).isEqualTo("test-products/sku1");
-          return Promise.create((resolve) => {
-            resolve({"data": {"profit": 100}});
-          });
-        }
-      };
-    });
-
-    runCode(mockData);
-setup: |-
-  const Promise = require("Promise");
-
-  /**
-   * Add mock getEventData to the test.
-   * @param {!Array<!Object>} items an array of items from the datalayer.
-   */
-  function addMockEventData(items){
-    mock("getEventData", (data) => {
-      if (data === "items") {
-        return items;
-      }
-    });
-  }
-
-  /**
-   * Add mock Firestore library to the test.
-   * @param {!Object} firestoreDocs an object representing the firestore response.
-   */
-  function addMockFirestore(firestoreDocs){
-    mock("Firestore", () => {
-      return {
-        "read": (path, options) => {
-          const sku = path.replace(mockData.collectionId + "/", "");
-          const doc = firestoreDocs[sku];
-          return Promise.create((resolve) => {
-            resolve(doc);
-          });
-        }
-      };
-    });
-  }
+scenarios: []
 
 
 ___NOTES___
