@@ -63,13 +63,6 @@ to advertising platforms using sGTM's built-in tags but could also be stored in
 Firestore and/or BigQuery by [Hephaestus](./sgtm/hephaestus/README.md) and 
 [Chaos](./sgtm/choas/README.md).
 
-### Cerberus
-
-**Use case**: Integrate reCAPTCHA to filter bot-generated events & suspicious
-activity and improve data models by using bot-likelihood signals.
-
-See [Cerberus](https://github.com/GoogleCloudPlatform/recaptcha-enterprise-google-tag-manager).
-
 ## Developer
 
 To update the git submodules run:
@@ -83,7 +76,7 @@ Do not use the `--recursive` flag.
 ## Disclaimer
 __This is not an officially supported Google product.__
 
-Copyright 2023 Google LLC. This solution, including any related sample code or
+Copyright 2024 Google LLC. This solution, including any related sample code or
 data, is made available on an "as is", "as available", and "with all faults"
 basis, solely for illustrative purposes, and without warranty or representation
 of any kind. This solution is experimental, unsupported and provided solely for
