@@ -4,3 +4,6 @@
 [submodule "sgtm/phoebe"]
 	path = sgtm/phoebe
 	url = https://github.com/google-marketing-solutions/gps-phoebe
+[submodule "sgtm/cerberus"]
+	path = sgtm/cerberus
+	url = https://github.com/GoogleCloudPlatform/recaptcha-enterprise-google-tag-manager
