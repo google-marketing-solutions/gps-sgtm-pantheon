@@ -224,13 +224,14 @@ ___SANDBOXED_JS_FOR_SERVER___
  */
 
 
-const addEventCallback = require('addEventCallback');
+//const addEventCallback = require('addEventCallback');
 const BigQuery = require('BigQuery');
 const getEventData = require('getEventData');
 const getTimestampMillis = require('getTimestampMillis');
 const JSON = require('JSON');
 const log = require('logToConsole');
 const Math = require('Math');
+const getType = require('getType');
 
 
 const currentTimestamp = getTimestampMillis();
@@ -297,6 +298,8 @@ function createDateString(currentTimestamp) {
   return dateArray.year + dateArray.month + dateArray.day;
 }
 
+
+
 // creating object with all parameters that can be fetched from event data model
 const eventData = {
   event_timestamp: currentTimestamp,
@@ -345,17 +348,23 @@ attributesNames.forEach(param => {
   } 
 });
 
+// Mock API returns a function, whereas usual import is object.
+// This logic enables support for tests within the function. See
+// https://developers.google.com/tag-platform/tag-manager/server-side/api#mock
+let bigquery = BigQuery;
+if (getType(BigQuery) === "function"){
+  bigquery = BigQuery();
+}
 
-addEventCallback(() => {
-  BigQuery.insert({
-    projectId: data.gcpProjectId,
-    datasetId: data.datasetId,
-    tableId: data.tableId,
-  }, [outputObject], {}, () => {
-    log('BigQuery Success: ', [outputObject]);
-  }, (errors) => {
-    log('BigQuery Failure: ', JSON.stringify(errors));
-  });
+bigquery.insert({
+  projectId: data.gcpProjectId,
+  datasetId: data.datasetId,
+  tableId: data.tableId,
+}, [outputObject], {}, () => {
+  log('BigQuery Success: ', [outputObject]);
+}, (errors) => {
+  log('BigQuery Failure: ', JSON.stringify(errors));
+  data.gtmOnFailure();
 });
 
 data.gtmOnSuccess();
@@ -364,16 +373,6 @@ data.gtmOnSuccess();
 ___SERVER_PERMISSIONS___
 
 [
-  {
-    "instance": {
-      "key": {
-        "publicId": "read_event_metadata",
-        "versionId": "1"
-      },
-      "param": []
-    },
-    "isRequired": true
-  },
   {
     "instance": {
       "key": {
@@ -482,7 +481,58 @@ ___SERVER_PERMISSIONS___
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: Test createDateString formats dates as expected
+  code: |-
+    addMockGetTimestampMillis(1704099600000);
+    addMockBigQueryWithDateCheck('20240101');
+
+    runCode(mockData);
+
+    addMockGetTimestampMillis(1709164800000);
+    addMockBigQueryWithDateCheck('20240229');
+
+    runCode(mockData);
+setup: |-
+  const logToConsole = require("logToConsole");
+
+  // The tag configuration for the tests
+  let mockData = {
+    'gcpProjectId': 'my-project',
+    'datasetId': 'my_dataset',
+    'tableId': 'MyTable',
+    'attributesList': [
+      {'attribute': 'event_timestamp'},
+      {'attribute': 'date'},
+    ]
+  };
+
+  /**
+   * Add mock BigQuery library to the test which tests date is expected value.
+   * @param {string} expectedDate - the expected value for the date.
+   */
+  function addMockBigQueryWithDateCheck(expectedDate){
+    mock('BigQuery', () => {
+      return {
+        'insert': (connectionInfo, rows) => {
+          logToConsole(connectionInfo);
+          logToConsole(rows);
+          assertThat(rows).hasLength(1);
+          assertThat(rows[0].date).isEqualTo(expectedDate);
+        }
+      };
+    });
+  }
+
+  /**
+   * Mock the timestamp functionality and return the given timestamp in millis.
+   * @param {number} timestampMillis - the timestamp in millis to use
+   */
+  function addMockGetTimestampMillis(timestampMillis){
+    mock('getTimestampMillis', () => {
+      return timestampMillis;
+    });
+  }
 
 
 ___NOTES___
