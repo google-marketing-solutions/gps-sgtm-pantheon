@@ -93,11 +93,12 @@ function getFirestoreDocument(documentId) {
     return document;
   }
 
+
+  const path = data.collectionId + "/" + documentId;
+
   // Mock API returns a function, whereas usual import is object.
   // This logic enables support for tests within the function. See
   // https://developers.google.com/tag-platform/tag-manager/server-side/api#mock
-  const path = data.collectionId + "/" + documentId;
-
   let firestore = Firestore;
   if (getType(Firestore) === "function"){
     firestore = Firestore();
