@@ -44,7 +44,7 @@ These solutions allow you to send data from sGTM to other destinations.
 |Solution|One-liner|Use Case|Why is it called that?|
 |---|---|---|---|
 |[Hephaestus](./sgtm/hephaestus/README.md)|Write data to Firestore|Write or edit data in Firestore for advanced bidding (e.g. new/returning customer, nth transaction), advanced audience, analytics, and marketing data pipeline automation|God of fire|
-|[Chaos](./sgtm/choas/README.md)|Write data to BigQuery|Write data to BigQuery for advanced analytics, data recovery, audience creation, and marketing data pipeline automation|Chaos was the infinite void that came to be filled by the world, in the way BigQuey can be filled with data|
+|[Chaos](./sgtm/chaos/README.md)|Write data to BigQuery|Write data to BigQuery for advanced analytics, data recovery, audience creation, and marketing data pipeline automation|Chaos was the infinite void that came to be filled by the world, in the way BigQuey can be filled with data|
 |[Deipneus](./sgtm/deipneus/README.md)|Write data to first-party cookies in browser|Send first-party data back to the website. Useful for real time web personalisation and audience creation|Greek god of food, in particular bread|
 |[Hermes](./sgtm/hermes/README.md)|Send data to Pub/Sub to trigger other processes|Send data Pub/Sub in Google Cloud to trigger decoupled events, in a downstream pipeline.|The messenger god|
 
@@ -61,7 +61,7 @@ to [Phoebe](https://github.com/google-marketing-solutions/gps-phoebe) which
 could call a lead scoring model hosted in VertexAI. This score could be sent 
 to advertising platforms using sGTM's built-in tags but could also be stored in
 Firestore and/or BigQuery by [Hephaestus](./sgtm/hephaestus/README.md) and 
-[Chaos](./sgtm/choas/README.md).
+[Chaos](./sgtm/chaos/README.md).
 
 ## Developer
 
