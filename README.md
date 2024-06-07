@@ -36,6 +36,7 @@ the event data sent to sGTM when the hit is sent from the client-side tag.
 |[Artemis](./sgtm/artemis/README.md)|Get data from Firestore|Get customer data from Firestore and use it for conditional tag firing, advanced metrics, audience segmentation, and real-time website personalization without exposing data|Goddess of the hunt. Like the goddess, the solution goes out hunting for data and returns with it.|
 |[Apollo](./sgtm/apollo/README.md)|Get data from a Google sheet|Get data from a Google Sheet in realtime to generate lead gen value for lead scoring.|Greek god of knowledge, which can be stored in Sheets|
 |[Cerberus](https://github.com/GoogleCloudPlatform/recaptcha-enterprise-google-tag-manager)|Get reCAPTCHA scores in sGTM|Integrate reCAPTCHA to filter bot-generated events & suspicious activity. Also, improves data models by using bot-likelihood signals|The multi-headed dog who guards the gates of the Underworld|
+|[Dioscuri](./sgtm/dioscuri/README.md)|Get response from Gemini 1.0 Pro and Gemini 1.5 Pro APIs|The Greek name for Gemini|
 
 ### Send Data
 
