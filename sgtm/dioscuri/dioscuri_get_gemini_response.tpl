@@ -438,9 +438,10 @@ const JSON = require("JSON");
 const logToConsole = require("logToConsole");
 const sendHttpRequest = require("sendHttpRequest");
 
+logToConsole(data);
+
 //Function to convert string of words to array of strings
 function splitAndTrim(commaSeparatedString) {
-  commaSeparatedString = "hello, goodbye";
   const words = commaSeparatedString.split(',');
   const trimmedWords = []; 
   for (let i = 0; i < words.length; i++) {
@@ -463,7 +464,6 @@ const auth = getGoogleAuth({
 });
 
 // Create parts object which contains text and file prompts
-logToConsole(data);
 const parts = [];
 
 if (data.textPromptData) {
@@ -471,7 +471,6 @@ if (data.textPromptData) {
     parts.push({"text": textPrompt.text});
   });
 }
-
 
 if (data.filePromptData && data.geminiModel == "gemini-1.5-pro") {
   data.filePromptData.forEach((filePrompt) => {
@@ -484,7 +483,7 @@ if (data.filePromptData && data.geminiModel == "gemini-1.5-pro") {
 
 if (parts.length == 0) {
   logToConsole("At least one prompt must be supplied");
-  //data.gtmOnFailure();
+  return data.defaultValueOnError;
 }
 
 // The payload for VertexAI Gemini
@@ -526,12 +525,15 @@ const postBodyData = {
     "topP": data.topP,
     "candidateCount": 1,
     "maxOutputTokens": data.maxOutputTokens,
-    "stopSequences": splitAndTrim(data.stopSequence),
     "responseMimeType": "text/plain"
   }
 };
 
-//Some features only available in gemini 1.5
+if (data.stopSequences) {
+  postBodyData.generationConfig.stopSequences = splitAndTrim(data.stopSequences);
+}
+
+//Some features only available in Gemini 1.5
 if (data.geminiModel == "gemini-1.5-pro") {
   postBodyData.generationConfig.presencePenalty = data.presencePenalty;
   postBodyData.generationConfig.frequencyPenalty = data.frequencyPenalty;
@@ -649,5 +651,3 @@ setup: ''
 ___NOTES___
 
 Created on 5/3/2023, 5:16:28 PM
-
-

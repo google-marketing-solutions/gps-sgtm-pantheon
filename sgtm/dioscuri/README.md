@@ -23,7 +23,7 @@ outlines how Server Side Google Tag Manager (sGTM) can be used with Gemini.
 
 1. In the Google Cloud console, on the project selector page, select a 
    Google Cloud project.
-2. [Use this link to enable the Vertex AI API](https://pantheon.corp.google.com/apis/enableflow?apiid=aiplatform.googleapis.com&_ga=2.89950491.1404017710.1717753577-283650328.1717753577&project=gps-asa-uk-sgtm-demo-account)
+2. [Use this link to enable the Vertex AI API](https://console.cloud.google.com/apis/enableflow?apiid=aiplatform.googleapis.com)
 3. Go to IAM settings and find the service account which is used to deploy sGTM.
    Grant this service account the Vertex AI User permission.
 
@@ -31,7 +31,7 @@ More details can be found on this [quickstart guide](https://cloud.google.com/ve
 
 ## Server-Side GTM Setup
 
-1. Download the [Dioscuri variable template](./../src/gtm/dioscuri_get_gemini_response.tpl) 
+1. Download the [Dioscuri variable template](./dioscuri_get_gemini_response.tpl) 
 2. Go to the server-side container in
    [tagmanager.google.com](https://tagmanager.google.com/).
 3. Go to templates -> new variable template.
@@ -68,7 +68,7 @@ More details can be found on this [quickstart guide](https://cloud.google.com/ve
 ## Example Use Case
 
 You are a retail client who wants to get a personalised message for a user when
-they log into your site. You have already got user data  in Firestore and it is
+they log into your site. You have already got user data in Firestore and it is
 accessible in sGTM as variables using [Artemis](./sgtm/artemis/README.md).
 
 Add some text prompts. In this example we added the following:
@@ -80,7 +80,7 @@ a returning customer and it is {{Is High Value User - boolean}} that she is a hi
 customers. They live in {{Firestore User Data - Address - City}}, {{Firestore User Data - 
 Address - Country}}.
 2. Here is some information about {{Firestore User Data - First name}} in a stringified 
-JSON format which you should parse: {{Custome Data}}
+JSON format which you should parse: {{Customer Data}}
 3. For high-value customers make sure to say how much you value them. For low value 
 customers encourage them to buy more
 
@@ -108,6 +108,8 @@ aware of his favourte category and colour:
 |presencePenalty|Positive values penalize tokens already present in the generated text, promoting the generation of more diverse content. Range: -2.0 to 2.0 (excluding 2.0)|
 |candidateCount|The number of response variations to return. This value must be 1.|
 |stopSequences|A list of case-sensitive strings. If the model encounters one of these strings in the response, it stops generating text. Maximum 5 items.|
+
+A full list of API parameters and their descriptions can be found in the [developer documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini).
 
 ## Disclaimer
 
