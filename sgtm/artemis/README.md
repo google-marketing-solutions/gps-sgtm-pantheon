@@ -151,9 +151,9 @@ which sends data to the server-side container:
 #### Overview
 
 This is where the magic happens. In the server-side container the user data
-is looked up using the "[Artemis variable template](./../src/gtm/get_document_from_firestore.tpl)”.
+is looked up using the "[Artemis variable template](./get_document_from_firestore.tpl)”.
 The document is returned as a Stringified JSON object. Value can be extracted
-using the "[extraction template](./../src/gtm/extract_value_from_stringified_json_object.tpl)”.
+using the "[extraction template](./extract_value_from_stringified_json_object.tpl)”.
 
 #### Set up
 
@@ -186,14 +186,14 @@ This service account needs to have permission to access the Firestore data.
 
 ##### Variables in Tag Manager
 
-1. Download the [Artemis variable template](./../src/gtm/get_document_from_firestore.tpl) 
-   and [extraction template](./../src/gtm/extract_value_from_stringified_json_object.tpl) 
+1. Download the [Artemis variable template](./get_document_from_firestore.tpl) 
+   and [extraction template](./extract_value_from_stringified_json_object.tpl) 
    files. Ensure that the file extensions remain .tpl.
 2. Go to the server-side container in
    [tagmanager.google.com](https://tagmanager.google.com/).
 3. Go to templates -> new variable template.
 4. Click on the three-dot menu on the top right and choose `Import`.
-5. Select the "[Artemis variable template](./../src/gtm/get_document_from_firestore.tpl)”
+5. Select the "[Artemis variable template](./get_document_from_firestore.tpl)”
     file.
 6. Go to the permission tab and set the permissions for Firestore, ensuring you
    update the project ID.
@@ -205,7 +205,7 @@ This service account needs to have permission to access the Firestore data.
    a user ID variable depending on your set up.
 9. Go to templates -> new variable template.
 10. Click on the three-dot menu on the top right and choose `Import`.
-11. Select the [extraction template](./../src/gtm/extract_value_from_stringified_json_object.tpl) 
+11. Select the [extraction template](./extract_value_from_stringified_json_object.tpl) 
     file.
 12. Save the template.
 13. Go to variables -> new user defined variable and create variables based on 
