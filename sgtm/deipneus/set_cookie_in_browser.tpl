@@ -114,8 +114,8 @@ if (data.cookiesToSet) {
       makeString(name), 
       makeString(cookies[cookie].value),
       {'domain': 'auto',
-       'max-age': expiryInSecond, 
-       'httpOnly': true}
+       'path': '/',
+       'max-age': expiryInSecond}
     );
     
   }
