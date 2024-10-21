@@ -20,23 +20,26 @@ Deipneus is pronounced a bit like "deep-KNEE-uss".
 ## Get Started
 
 1. Download a copy of the [set_cookie_in_browser.tpl](./set_cookie_in_browser.tpl) to
-  your local machine. Make sure the file is saved with the extension `.tpl`.
-2. Open [Google Tag Manager](https://tagmanager.google.com) and select your
+  your local machine. Make sure the file is saved with the extension `.tpl`. If you
+  would like more control of the settings for the cookie you're setting an
+  [advanced template](./set_cookie_in_browser.tpl) is available. This template gives
+  you full control of path, domain, samesite, and secure settings for the cookies.
+3. Open [Google Tag Manager](https://tagmanager.google.com) and select your
   server-side container.
-3. Click on templates -> the new button in the tag templates section. Click the
+4. Click on templates -> the new button in the tag templates section. Click the
    three dots in the top right hand corner and press import.
-4. Select the set_cookie_in_browser.tpl from your machine. 
-5. Optionally update the permissions for the cookies that the tag is allowed
+5. Select the set_cookie_in_browser.tpl from your machine. 
+6. Optionally update the permissions for the cookies that the tag is allowed
    to set by going to permissions > sets a cookie. Use * to allow the tag to
    set any cookies. If you want to set a session cookie set the expiry (days)
    to 0.
-6. Press save.
-7. Go to the tags page and press new.
-8. Under tag configuration select Deipneus - Set Cookie in Browser.
-9. Add a row for each cookie you want to set in the browser by hard-coding
+7. Press save.
+8. Go to the tags page and press new.
+9. Under tag configuration select Deipneus - Set Cookie in Browser.
+10. Add a row for each cookie you want to set in the browser by hard-coding
    the values or using variables already configured in sGTM.
-10. Add a trigger, and preview/submit your code.
-11. You can check the cookies have been set correctly by using browser dev
+11. Add a trigger, and preview/submit your code.
+12. You can check the cookies have been set correctly by using browser dev
     tools.
 
 Here is an example configuration:
