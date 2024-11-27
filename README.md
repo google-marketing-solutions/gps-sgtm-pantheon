@@ -19,8 +19,8 @@ Use cases include:
 ## Solutions
 
 The sGTM Pantheon includes lots of individual solutioins all with a specific 
-purpose. The list of tools are broadly split into two categories: gathering 
-data or sending data. The solutions can be combined very flexibility (more 
+purpose. The list of tools are broadly split into three categories: gathering 
+data, sending datam and monitoring data. The solutions can be combined very flexibility (more 
 detail below).
 
 ### Gather Data
@@ -49,6 +49,13 @@ These solutions allow you to send data from sGTM to other destinations.
 |[Deipneus](./sgtm/deipneus/README.md)|Write data to first-party cookies in browser|Send first-party data back to the website. Useful for real time web personalisation and audience creation|Greek god of food, in particular bread|
 |[Hermes](./sgtm/hermes/README.md)|Send data to Pub/Sub to trigger other processes|Send data Pub/Sub in Google Cloud to trigger decoupled events, in a downstream pipeline.|The messenger god|
 
+### Monitor Data
+
+These solutions allow you to monitor data in sGTM more easily.
+
+|Solution|One-liner|Use Case|Why is it called that?|
+|---|---|---|---|
+|[Argos](./sgtm/argos/README.md)|Monitor critical gTag settings|Monitor settings related to gTag configuration and log errors to the console, GA4, BigQuery, and/or Cloud Logging. Settings relate to domain, region, consent, privacy, and gTag measurment ID configuration|
 
 ## Combining solutions
 
