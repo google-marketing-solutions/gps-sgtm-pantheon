@@ -36,13 +36,13 @@ by editing the template.
 
 If the server-side container is deployed to App Engine or Cloud Run, then Google 
 Tag Manager will use the service account attached to the instance for connecting 
-to Firestore.
+to BigQuery.
 
 If the server-side container is deployed in a different Cloud provider to Google 
 Cloud, please follow these [additional instructions](https://developers.google.com/tag-platform/tag-manager/server-side/manual-setup-guide#optional_include_google_cloud_credentials) to attach
 a Google Cloud service account to the deployment.
 
-This service account needs to have permission to access the Firestore data.
+This service account needs to have permission to access the BigQuery data.
 
 1. Open the [IAM Service Accounts page](
    https://console.cloud.google.com/iam-admin/serviceaccounts) in the Google
