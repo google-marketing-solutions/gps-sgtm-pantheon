@@ -65,7 +65,7 @@ be used for the use cases listed above.
 |Setting|What is it?|What will happen if this is incorrect|Example Input|
 |---|---|---|---|
 |Expected Domains|A comma-separate list of the domains on which your gTag is installed.|If the gTag is called from an incorrect domain it's very likely that attribution will not work correctly because cookies are not shared across domains. [sGTM should always be called from the same domain (including subdomains) as the client-side container](https://developers.google.com/tag-platform/tag-manager/server-side/custom-domain?option=subdomain)|example.co.uk, example.de, example.fr|
-|Expected Countries|A list of countries where you expect traffic to|Google treats data differently in different regions. If traffic is coming from unexpected regions it could suggest issues with the client-side gTag set-up or your [region-specific settings](https://developers.google.com/tag-platform/tag-manager/server-side/enable-region-specific-settings) in sGTM. This list should be a comma-searate list of ISO-3166-1 alpha-2 formatted country codes|GB, DE, FR|
+|Expected Countries|A list of countries where you expect traffic to|Google treats data differently in different regions. If traffic is coming from unexpected regions it could suggest issues with the client-side gTag set-up or your [region-specific settings](https://developers.google.com/tag-platform/tag-manager/server-side/enable-region-specific-settings) in sGTM. This list should be a comma-searated list of [ISO-3166-1 alpha-2 formatted country codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)|GB, DE, FR|
 |Expected GA Measurment IDs|Comma-separated list of the GA Measurement IDs you expect to see firing on your site.|Having the incorrect GA4 measurement IDs may mean data is routed incorrectly or you have unexpected tags on your website.|G-B7Q2YVVMBE, G-H6334KDAH|
 |Expected DMA parameter value|The gTag sets the DMA parameter based on where it thinks the user is. DMA = 1 is expected for EEA traffic and 0 for non-EEA traffic. Different data controls are applied to EEA traffic.|If you are seeing DMA = 1 coming from non-EEA countries you will likely find significant data discrepancies in your Google account because user data will not be joined as expected|Choose 1, 0, or both from the dropdown|
 |Expected GCS Values|The [GCS parameter relates to consent mode](https://developers.google.com/tag-platform/security/concepts/consent-mode#:~:text=The%20gcs%20parameter%20is%20used,or%20device%20identifiers%20(app).). G111 means all consent is granted and G100 means all consent is denied but cookieless pings have been implemented. Comma-separated list of the GCS values you expect to see from your tag. Allowed values are: G100, G101, G110, and G111|Seeing unexpected GCS parameters means consent mode is implemented incorrectly.|For basic consent mode you may add: G101,G110, G111. For advanced consent mode you may add G100, G101, G110, G111.|
@@ -167,11 +167,14 @@ you to filter logs accordingly. Add this message in the Custom Cloud Logging Mes
 input field
 
 Follow the [console logging instructions](https://developers.google.com/tag-platform/tag-manager/server-side/cloud-run-setup-guide?provisioning=manual#optional_disable_logging)
-to filter out 
+to filter out the logs coming from the Argos tag using the custom message you've set up.
 
-Note: this will mean that the tag logs twice if you have also selected "Log to 
-console in preview mode when there is an error"
+Note: logging all events can be very expensive, especially for servers with a 
+significant amount of traffic. It is possible to choose to only log specific 
+messages by following the instructions linked in the previous paragraph.
 
+Note: this will mean that the tag logs twice in preview mode if you have also
+selected "Log to console in preview mode when there is an error".
 
 ## Disclaimer
 
