@@ -20,7 +20,7 @@ Use cases include:
 
 The sGTM Pantheon includes lots of individual solutioins all with a specific 
 purpose. The list of tools are broadly split into three categories: gathering 
-data, sending datam and monitoring data. The solutions can be combined very flexibility (more 
+data, sending data and monitoring data. The solutions can be combined very flexibility (more 
 detail below).
 
 ### Gather Data
