@@ -55,7 +55,7 @@ These solutions allow you to monitor data in sGTM more easily.
 
 |Solution|One-liner|Use Case|Why is it called that?|
 |---|---|---|---|
-|[Argos](./sgtm/argos/README.md)|Monitor critical gTag settings|Monitor settings related to gTag configuration and log errors to the console, GA4, BigQuery, and/or Cloud Logging. Settings relate to domain, region, consent, privacy, and gTag measurment ID configuration|
+|[Argos](./sgtm/argos/README.md)|Monitor critical gTag settings|Monitor settings related to gTag configuration and log errors to the console, GA4, BigQuery, and/or Cloud Logging. Settings relate to domain, region, consent, privacy, and gTag measurment ID configuration|Argos is an all-seeing many-eye giant|
 
 ## Combining solutions
 
