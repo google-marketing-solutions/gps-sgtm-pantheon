@@ -10,7 +10,7 @@
     "id": "brand_dummy",
     "displayName": ""
   },
-  "description": "Monitor. Optionally log errors in the console, GA4, and BigQuery",
+  "description": "Monitor critical gTag settings. Optionally log errors in the console, GA4, BigQuery, and Cloud Logging.",
   "containerContexts": [
     "SERVER"
   ]
@@ -25,21 +25,22 @@ ___TEMPLATE_PARAMETERS___
     "name": "expectedDomains",
     "displayName": "Expected Domains",
     "simpleValueType": true,
-    "help": "Comma-separated list of the domains you expect to see sending data to your server-side container."
+    "help": "Comma-separated list of the domains you expect to see sending data to your server-side container. If left blank the tag will not check the domain.",
+    "valueValidators": []
   },
   {
     "type": "TEXT",
     "name": "expectedCountries",
     "displayName": "Expected Countries",
     "simpleValueType": true,
-    "help": "Comma-separated list of the countries you expect to see sending data to your server-side container. Country codes use ISO-3166-1 alpha-2 format."
+    "help": "Comma-separated list of the countries you expect to see sending data to your server-side container. Country codes use ISO-3166-1 alpha-2 format. If left blank the tag will not check the country."
   },
   {
     "type": "TEXT",
     "name": "expectedGAMeasurmentIds",
     "displayName": "Expected GA Measurment IDs",
     "simpleValueType": true,
-    "help": "Comma-separated list of the GA Measurement IDs you expect to see firing on your site."
+    "help": "Comma-separated list of the GA Measurement IDs you expect to see firing on your site. If left blank the tag will not check the GA4 measurement IDs."
   },
   {
     "type": "SELECT",
@@ -68,7 +69,7 @@ ___TEMPLATE_PARAMETERS___
     "name": "expectedGCSValues",
     "displayName": "Expected GCS Values",
     "simpleValueType": true,
-    "help": "Comma-separated list of the GCS values you expect to see from your tag. Allowed values are: G100, G101, G110, and G111"
+    "help": "Comma-separated list of the GCS values you expect to see from your tag. Allowed values are: G100, G101, G110, and G111. If left blank the tag will not check the GCS values."
   },
   {
     "type": "GROUP",
@@ -280,22 +281,13 @@ const getEventData = require("getEventData");
 const getAllEventData = require("getAllEventData");
 const getRequestQueryString = require('getRequestQueryString');
 const logToConsole = require("logToConsole");
-const getRequestQueryParameter = require("getRequestQueryParameter");
-const getRequestQueryParameters = require("getRequestQueryParameters");
-const makeNumber = require("makeNumber");
 const sendEventToGoogleAnalytics = require("sendEventToGoogleAnalytics");
 const bigQuery = require("BigQuery");
 const getTimestampMillis = require("getTimestampMillis");
 const JSON = require("JSON");
-const getType = require("getType");
 const makeString = require("makeString");
-const sendHttpRequest = require('sendHttpRequest');
-const setResponseBody = require('setResponseBody');
-const setResponseHeader = require('setResponseHeader');
-const setResponseStatus = require('setResponseStatus');
-const getGoogleAuth = require('getGoogleAuth');
 
-//Helper function to check if input is in a comma separate list
+//Helper function to check if input is in a comma-separated list
 function isValueInList(listString, valueToCheck) {
   if (listString === "") {
     return false; 
@@ -392,7 +384,7 @@ if(data.logToConsoleIfError && numErrors > 0) {
 
 //Log to console even without an error
 if(data.logToConsoleIfNoError && numErrors == 0) {
-  logToConsole("No errors found");
+  logToConsole("No errors found.");
 }
 
 //Send event to GA4, overriding GA measurement ID and event name
@@ -413,7 +405,7 @@ if(data.sendGa4Event && numErrors > 0) {
 
 //Log to BiqQuery
 if(data.logToBigQuery && numErrors > 0) {
-  
+
   //Create object to insert into BigQuery
   let bigQueryData = {};
   if(data.addTimestamp) {
@@ -437,9 +429,7 @@ if(data.logToBigQuery && numErrors > 0) {
 
 //Log to Cloud Logging using custom Error Message
 if(data.logToCloudLogging && numErrors > 0) {
-  
   logToConsole(data.customCloudLoggingMessage + '; Request: ' + request + '; ' + errorMessage);
- 
 }
 
 // Call data.gtmOnSuccess when the tag is finished.
@@ -614,60 +604,6 @@ ___SERVER_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "access_response",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "writeResponseAccess",
-          "value": {
-            "type": 1,
-            "string": "specific"
-          }
-        },
-        {
-          "key": "writeHeaderAccess",
-          "value": {
-            "type": 1,
-            "string": "specific"
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "use_google_credentials",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "allowedScopes",
-          "value": {
-            "type": 2,
-            "listItem": [
-              {
-                "type": 1,
-                "string": "https://www.googleapis.com/auth/logging.write"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
   }
 ]
 
@@ -679,6 +615,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 27/11/2024, 15:32:37
+Created on 02/12/2024, 10:03:10
 
 

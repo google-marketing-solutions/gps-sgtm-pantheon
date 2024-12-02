@@ -5,16 +5,17 @@ Argos checks critical gTag settings and log errors to the console, GA4, and BigQ
 ## Background
 It is common to encounter problems when moving from client-side tagging to 
 server-side tagging because of the many nuaces and complexities involved.
-In particular, it is common to find issues with with the Google Tag, or gTag, which can
-cause potentially large discrepancies with reporting, bidding, audiences in 
-Google and other marketing platforms.
+In particular, it is common to find issues with with the Google Tag, or gTag, 
+which can cause potentially large discrepancies with reporting, bidding, 
+audiences in Google and other marketing platforms.
 
 It is often difficult to know what settings and parameters are causing these
-issues. Argos monitors a few of the most important settings so any that are incorrect
-are spotted quickly. The common configuation settings the tag checks are:
+issues. Argos monitors a few of the most important settings so any that are 
+incorrect are spotted quickly. The common configuation settings the tag 
+checks are:
 
 - domain & region settings
-- gTag measurement ID
+- gTag measurement IDs
 - consent & privacy settings
 
 For more details on these see Explanation of Settings in Detail below.
@@ -26,10 +27,6 @@ giant in Greek mythology. This tag watches over your gTag settings in production
 and allows you to monitor them through GA4, BigQuery, and/or Cloud Logging.
 
 ## Implementation
-Ready to start implementing this solution? You can follow the guide below which 
-outlines how Server Side Google Tag Manager (sGTM) can be used with Firestore, 
-to pull in sensitive data and report access it in sGTM variables which can then
-be used for the use cases listed above.
 
 ### Prerequisites
 
@@ -42,12 +39,12 @@ be used for the use cases listed above.
 1. Download the [crictial_gtag_monitoring.tpl](./crictial_gtag_monitoring.tpl) template to
    your local machine. Make sure the file is saved with the extension `.tpl`.
 2. Open [Google Tag Manager](https://tagmanager.google.com) and select your
-  server-side container.
-3. Click on templates -> the new button in the tag templates section. Click the
-   three dots in the top right hand corner and press import.
+   server-side container.
+3. Click on templates -> then the new button in the tag templates section. Click the
+   three dots in the top right hand corner and import.
 4. Select the template from your machine.
 5. Optionally edit the permissions to specific which projects and tables in BigQuery
-   and tags using this template will be able to access. You can use an * if you would 
+   and tags using this template will be able to access. You can use a * if you would 
    like the template to be able to access any database, though you will
    need to ensure access settings are configured correctly (see below).
 6. Press save.
@@ -65,10 +62,10 @@ be used for the use cases listed above.
 |Setting|What is it?|What will happen if this is incorrect|Example Input|
 |---|---|---|---|
 |Expected Domains|A comma-separate list of the domains on which your gTag is installed.|If the gTag is called from an incorrect domain it's very likely that attribution will not work correctly because cookies are not shared across domains. [sGTM should always be called from the same domain (including subdomains) as the client-side container](https://developers.google.com/tag-platform/tag-manager/server-side/custom-domain?option=subdomain)|example.co.uk, example.de, example.fr|
-|Expected Countries|A list of countries where you expect traffic to|Google treats data differently in different regions. If traffic is coming from unexpected regions it could suggest issues with the client-side gTag set-up or your [region-specific settings](https://developers.google.com/tag-platform/tag-manager/server-side/enable-region-specific-settings) in sGTM. This list should be a comma-searated list of [ISO-3166-1 alpha-2 formatted country codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)|GB, DE, FR|
+|Expected Countries|A list of countries where you expect traffic to come from.|Google treats data differently in different regions. If traffic is coming from unexpected regions it could suggest issues with the client-side gTag set-up or your [region-specific settings](https://developers.google.com/tag-platform/tag-manager/server-side/enable-region-specific-settings) in sGTM. This list should be a comma-searated list of [ISO-3166-1 alpha-2 formatted country codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)|GB, DE, FR|
 |Expected GA Measurment IDs|Comma-separated list of the GA Measurement IDs you expect to see firing on your site.|Having the incorrect GA4 measurement IDs may mean data is routed incorrectly or you have unexpected tags on your website.|G-B7Q2YVVMBE, G-H6334KDAH|
 |Expected DMA parameter value|The gTag sets the DMA parameter based on where it thinks the user is. DMA = 1 is expected for EEA traffic and 0 for non-EEA traffic. Different data controls are applied to EEA traffic.|If you are seeing DMA = 1 coming from non-EEA countries you will likely find significant data discrepancies in your Google account because user data will not be joined as expected|Choose 1, 0, or both from the dropdown|
-|Expected GCS Values|The [GCS parameter relates to consent mode](https://developers.google.com/tag-platform/security/concepts/consent-mode#:~:text=The%20gcs%20parameter%20is%20used,or%20device%20identifiers%20(app).). G111 means all consent is granted and G100 means all consent is denied but cookieless pings have been implemented. Comma-separated list of the GCS values you expect to see from your tag. Allowed values are: G100, G101, G110, and G111|Seeing unexpected GCS parameters means consent mode is implemented incorrectly.|For basic consent mode you may add: G101,G110, G111. For advanced consent mode you may add G100, G101, G110, G111.|
+|Expected GCS Values|The [GCS parameter relates to consent mode](https://developers.google.com/tag-platform/security/concepts/consent-mode#:~:text=The%20gcs%20parameter%20is%20used,or%20device%20identifiers%20(app).). G111 means all consent is granted and G100 means all consent is denied but cookieless pings have been implemented. Comma-separated list of the GCS values you expect to see from your tag. Allowed values are: G100, G101, G110, and G111|Seeing unexpected GCS parameters means consent mode is implemented incorrectly.|For basic consent mode you might add: G101,G110, G111. For advanced consent mode you might add G100, G101, G110, G111.|
 
 Here is an example of how you may configure the tag. It is expect traffic from 
 three websites in GB, DE, and FR with three gTags. DMA is set to "Any" because
