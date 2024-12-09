@@ -189,11 +189,11 @@ ___SERVER_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "gps-asa-uk-sgtm-demo-account"
+                    "string": "GOOGLE_CLOUD_PROJECT"
                   },
                   {
                     "type": 1,
-                    "string": "users/*"
+                    "string": "*"
                   },
                   {
                     "type": 1,
