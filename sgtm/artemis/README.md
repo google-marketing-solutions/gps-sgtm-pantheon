@@ -199,21 +199,21 @@ This service account needs to have permission to access the Firestore data.
    update the project ID and the collection name. Use a * to allow the tag to 
    access any collection. Incorrect details here will produce a permission
    error when you fire the tag.
-8. Save the template.
-9. Go to variables -> new user defined variable and create a “user” variable
+7. Save the template.
+8. Go to variables -> new user defined variable and create a “user” variable
    from the Artemis variable template. You will need to pass in the use variable
    that is being send from the client-side event which may required you creating 
    a user ID variable depending on your set up.
-10. Go to templates -> new variable template.
-11. Click on the three-dot menu on the top right and choose `Import`.
-12. Select the [extraction template](./extract_value_from_stringified_json_object.tpl) 
+9. Go to templates -> new variable template.
+10. Click on the three-dot menu on the top right and choose `Import`.
+11. Select the [extraction template](./extract_value_from_stringified_json_object.tpl) 
     file.
-13. Save the template.
-14. Go to variables -> new user defined variable and create variables based on 
+12. Save the template.
+13. Go to variables -> new user defined variable and create variables based on 
     your (e.g. new/returning user, high_value_user) from the extraction variable
     template.
-15. These variable are now available to be used in tags as metrics and dimensions
-11. Save and deploy the code.
+14. These variable are now available to be used in tags as metrics and dimensions
+15. Save and deploy the code.
 
 
 ## Example Use Cases
