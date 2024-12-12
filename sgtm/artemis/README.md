@@ -196,8 +196,9 @@ This service account needs to have permission to access the Firestore data.
 5. Select the "[Artemis variable template](./get_document_from_firestore.tpl)”
     file.
 6. Go to the permission tab and set the permissions for Firestore, ensuring you
-   update the project ID.
-   ![Template permissions](./img/gtm-template-permissions.png)
+   update the project ID and the collection name. Use a * to allow the tag to 
+   access any collection. Incorrect details here will produce a permission
+   error when you fire the tag.
 7. Save the template.
 8. Go to variables -> new user defined variable and create a “user” variable
    from the Artemis variable template. You will need to pass in the use variable
@@ -212,7 +213,7 @@ This service account needs to have permission to access the Firestore data.
     your (e.g. new/returning user, high_value_user) from the extraction variable
     template.
 14. These variable are now available to be used in tags as metrics and dimensions
-11. Save and deploy the code.
+15. Save and deploy the code.
 
 
 ## Example Use Cases
