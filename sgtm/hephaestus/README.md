@@ -41,14 +41,16 @@ Hephaestus is pronounced "hef-FI-stuss"
   - a. Replace Entire Document - this will instruct the tag to delete the entire 
   contents of the documents in Firestore and replace it with the attributes listed
   in the tag
-  - b. Edit or add attributes - this gives you the ability to edit or add individual 
+  - b. Edit or add document & attributes - this gives you the ability to edit or add individual 
   attributes within a document without affecting any other attributes that may be in 
   Firestore. With this second option you can choose for each attribute the behaviour
   if this attribute already exists. If you would like to overwrite the attribute select
   "Yes" for overwrite if exists. If you select "no" instead the tag will not edit the
   attribute if it already exists in Firestore. If you select "no" and the attribute
   does not yet exist it will create the attribute and set the relevant value on the
-  first fire but will not edit it on future tag fires.
+  first fire but will not edit it on future tag fires. If the document does not already 
+  exist, this option will create the document on the first call and then add or edit
+  attributes on subsequent calls. 
 11. Add a trigger, and preview/submit your code.
 
 Here is an example configuration with the edit or add attribute behaviour selected:
