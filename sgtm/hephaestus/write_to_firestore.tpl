@@ -80,7 +80,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "value": "editOrAdd",
-            "displayValue": "Edit or add attributes"
+            "displayValue": "Edit or add document & attributes"
           }
         ],
         "simpleValueType": true,
