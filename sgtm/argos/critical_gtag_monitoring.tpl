@@ -25,8 +25,7 @@ ___TEMPLATE_PARAMETERS___
     "name": "expectedDomains",
     "displayName": "Expected Domains",
     "simpleValueType": true,
-    "help": "Comma-separated list of the domains you expect to see sending data to your server-side container. If left blank the tag will not check the domain.",
-    "valueValidators": []
+    "help": "Comma-separated list of the domains you expect to see sending data to your server-side container. If left blank the tag will not check the domain."
   },
   {
     "type": "TEXT",
@@ -322,7 +321,7 @@ let numErrors = 0;
 
 //Check domains
 if(data.expectedDomains) {
-  const requestDomain = extractDomain(getEventData("page_referrer"));
+  const requestDomain = extractDomain(getEventData("page_location"));
   if(!isValueInList(data.expectedDomains, requestDomain)) {
     errorMessage += "Request sent by unlisted domain. Expected: " + data.expectedDomains + " but got " + requestDomain + ". ";
     shortErrorMessage += "domains;";
@@ -409,7 +408,7 @@ if(data.logToBigQuery && numErrors > 0) {
   //Create object to insert into BigQuery
   let bigQueryData = {};
   if(data.addTimestamp) {
-    bigQueryData[data.timestampColumnName] = getTimestampMillis() / (10 ^ 6);
+    bigQueryData[data.timestampColumnName] = getTimestampMillis() / 1000;
   }
   bigQueryData[data.requestStringColumnName] = makeString(request);
   bigQueryData[data.errorMessageColumnName] = errorMessage;
