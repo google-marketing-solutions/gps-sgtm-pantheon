@@ -17,7 +17,7 @@ And in BigQuery the output looks like this:
 ## Background
 It is hard to monitor sGTM containers because they are stateless. If tags
 break or even the container goes down it can often take a while to notice.
-Zues allows you send logs to Cloud Logging and BigQuery. You can then use
+Zeus allows you send logs to Cloud Logging and BigQuery. You can then use
 this data to create alerts and dashboards.
 
 ## Why Zeus?
@@ -45,22 +45,22 @@ clouds. This tag logs to Google Cloud Logging
 5. If you want to log to Cloud Logging as well as preview made go to permissions and 
    ensure that "always log" is selected.
 6. Press save.
-7. Go to the tags page and press new. Select the Zues tempate you've just uploaded.
+7. Go to the tags page and press new. Select the Zeus tempate you've just uploaded.
 8. Configue the tag:
 - a. Monitoring mode & tag metadata: You can choose to monitor all tags, only included tags, or all
 tags except excluded tags. If you choose either of the second two options you will
 see two boxes appear which allow you control which tags are included/excluded. This
-is acheived by adding metadata to other tags in the container which Zues reads. In the
+is acheived by adding metadata to other tags in the container which Zeus reads. In the
 other tags you will need to go to advanced settings and add a piece of metadata. The
 example below shows how you might exclude tags from being monitored by adding a piece
 of metadata with the key "tag_monitoring_status" and the value "exclude":
 
 ![Example tag metadata exclusion set-up](./img/example_tag_metadata_exclusion.png)
 
-In Zues you would select the exclusion monitoring mode, and set Tag metadata key
+In Zeus you then select the exclusion monitoring mode, and set Tag metadata key
  to "tag_monitoring_status" and Tag metadata value to "exclude" as shown below:
 
- ![Example exclusion settings in Zues](./img/example_exclusion_settings.png)
+ ![Example exclusion settings in Zeus](./img/example_exclusion_settings.png)
 
 For inclusion you may choose "tag_monitoring_status" and the value "inclusion". 
 
@@ -81,24 +81,25 @@ of each log. This is important to help with reducing costs. You can use this
 message to create filters in cloud logging to only include logs that have this
 message at the beginning. Make sure it is something unique. You can use variables
 but it is not recommended. See Cloud Logging set-up below for further instructions.
-In the example above zues_monitoring_alert appears at the beginning of logs sent
-to Cloud Loggiing
+In the example above Zeus_monitoring_alert appears at the beginning of logs sent
+to Cloud Logging
 - e. BigQuery: add details of of the dataset that the tag will log data to. Follow
 the instructions below to create this table. As API calls to BigQuery may fail
 choose whether you'd like to log successes and errors to preview mode. You can also
-choose to cause the Zues tag to fail if the BigQuery insertion fails. Here is an 
+choose to cause the Zeus tag to fail if the BigQuery insertion fails. Here is an 
 example of a successful BigQuery call logged in preview mode:
 
 ![Successful BigQuery log in preview mode](./img/bigquery_log.png)
 
-9. Add a triggering condition. We recommend firing on all pages or all events while
-    doing testing to make sure you catch all potential errors.
+9. Add a triggering condition. Remember that Cloud Logging can be expensive
+so try to make the triggering condition as specific as possible.
 10. Save
 11. If logging to Cloud Logging follow the instructions below.
+12. Ensure you follow the tag set-up instructions below.
 
 ### Tag Set-up
 
-As mentioned above, for Zues to work correctly you will need to ensure that you
+As mentioned above, for Zeus to work correctly you will need to ensure that you
 set up the tag name and metadata settings corretly in all the other tags in your
 container. 
 

@@ -47,8 +47,9 @@ and vision
    three logs have been added which log the event time, details about a transaction
    and some profit data. A default message has been added to the third row because
    it is possible that the profit variable may return blank.
-10. Add a triggering condition. We recommend firing on all pages or all events while
-    doing testing to make sure you catch all potential errors.
+10. Add a triggering condition. If using variables be careful to only trigger
+the tag using events where the variable will be evaluated, otherwise you may
+end up with a lot of useless logs.
 11. Save
 12. If logging to Cloud Logging follow the instructions below.
 
