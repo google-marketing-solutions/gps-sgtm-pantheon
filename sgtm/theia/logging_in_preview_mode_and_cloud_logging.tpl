@@ -1,4 +1,5 @@
-﻿___INFO___
+﻿
+___INFO___
 
 {
   "type": "TAG",
@@ -54,7 +55,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "SIMPLE_TABLE",
     "name": "logs",
-    "displayName": "logMessages",
+    "displayName": "Logs",
     "simpleTableColumns": [
       {
         "defaultValue": "",
