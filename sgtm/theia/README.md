@@ -10,7 +10,7 @@ Cloud Logging settings.
 Logging in sGTM requires writing custom tag templates. Theia allows to log
 to the preview mode console of Cloud Logging without having to write code.
 
-## Why Argos?
+## Why Theia?
 
 [Theia](https://en.wikipedia.org/wiki/Theia) is is the Greek goddess of sight 
 and vision
@@ -36,12 +36,12 @@ and vision
 6. Press save.
 7. Go to the tags page and press new. Select the Theia tempate you've just uploaded.
 8. Configure the tag by adding expected settings.
-   a. Log Message Title: Adds a string to the beginning of logs. This is essentially
+   - a. Log Message Title: Adds a string to the beginning of logs. This is essentially
       when logging to Cloud Logging in order to reduce costs as you will use this as 
       a filter (see below). 
-   b. Log grouping: Will split or group logs as selected. If you only add one row
+   - b. Log grouping: Will split or group logs as selected. If you only add one row
       to the table below it doesn't matter which setting you choose.
-   c. Log default if log is null: In the case that a log returns null or empty (e.g.
+   - c. Log default if log is null: In the case that a log returns null or empty (e.g.
       if you're logging a variable from sGTM) you can choose to log a default
 9. Add things that you want logging as rows in the logs section. In the example below
    three logs have been added which log the event time, details about a transaction
