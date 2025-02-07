@@ -50,9 +50,9 @@ and vision
 11. Add a triggering condition. We recommend firing on all pages or all events while
     doing testing to make sure you catch all potential errors.
 12. Save
+13. If logging to Cloud Logging follow the instructions below.
 
 ![Example Settings](./img/example_settings.png)
-
 
 Here you can see the resulting logs in preview mode. It shows what happens if you
 choose to group or not group logs:
@@ -67,10 +67,21 @@ searching for the log message title which is highlighted in yellow:
 
 ### Google Cloud Logging Setup
 
-By default sGTM logs to Cloud Logging unless [logging has been disabled](https://developers.google.com/tag-platform/tag-manager/server-side/cloud-run-setup-guide?provisioning=manual#console-logging). Logging must be enabled for this feature to work.
+By default sGTM logs to Cloud Logging unless [logging has been disabled](https://developers.google.com/tag-platform/tag-manager/server-side/cloud-run-setup-guide?provisioning=manual#console-logging). 
+Logging must be enabled for this feature to work.
 
 Follow the [console logging instructions](https://developers.google.com/tag-platform/tag-manager/server-side/cloud-run-setup-guide?provisioning=manual#optional_disable_logging)
-to filter out the logs coming from the Argos tag using the custom message you've set up.
+to filter out the logs coming from the Argos tag using the custom message 
+you've set up.
+
+For example, to only include logs which start with the message
+"theia_sgtm_log" you would include "AND textPayload: "theia_sgtm_log"":
+
+![Example Log Router Settings](./img/example_log_router_settings.png)
+
+If you have other logging set-up this filter may be more complex. Use
+the preview function when you write the statements to test what logs
+are presevered before saving.
 
 Note: logging all events can be very expensive, especially for servers with a 
 significant amount of traffic. It is possible to choose to only log specific 
