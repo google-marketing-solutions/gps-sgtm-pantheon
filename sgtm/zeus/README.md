@@ -74,16 +74,18 @@ And here is an example of ungrouped logs:
 
  ![Ungrouped logs](./img/ungrouped_logs.png)
 
-- c. Actions: select what actions you'd like to tag to take. You will see 
+- c. Log Filtereing: choose if you want the tag to log all tags regardless
+of status or only success or failures/exceptions.
+- d. Actions: select what actions you'd like to tag to take. You will see 
 additional fields appear depending on your selection.
-- d. Cloud Logging Custom Message: Allows you to add a message to the beginning
+- e. Cloud Logging Custom Message: Allows you to add a message to the beginning
 of each log. This is important to help with reducing costs. You can use this 
 message to create filters in cloud logging to only include logs that have this
 message at the beginning. Make sure it is something unique. You can use variables
 but it is not recommended. See Cloud Logging set-up below for further instructions.
 In the example above Zeus_monitoring_alert appears at the beginning of logs sent
 to Cloud Logging
-- e. BigQuery: add details of of the dataset that the tag will log data to. Follow
+- f. BigQuery: add details of of the dataset that the tag will log data to. Follow
 the instructions below to create this table. As API calls to BigQuery may fail
 choose whether you'd like to log successes and errors to preview mode. You can also
 choose to cause the Zeus tag to fail if the BigQuery insertion fails. Here is an 

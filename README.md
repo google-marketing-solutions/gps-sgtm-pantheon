@@ -57,7 +57,7 @@ These solutions allow you to monitor data in sGTM more easily.
 |---|---|---|---|
 |[Argos](./sgtm/argos/README.md)|Monitor critical gTag settings|Monitor settings related to gTag configuration and log errors to the console, GA4, BigQuery, and/or Cloud Logging. Settings relate to domain, region, consent, privacy, and gTag measurment ID configuration|Argos is an all-seeing many-eye giant|
 |[Theia](./sgtm/theia/README.md)|Easily log to preview mode and Cloud Logging without needing to write any code|Godess of sight and clear blue skies|
-|[Zeus](./sgtm/zues/README.md)|Container monitoring tag. Easily log tag success and/or failures for events to preview mode, Cloud Logging, and BigQuery|God of the clouds|
+|[Zeus](./sgtm/zeus/README.md)|Container monitoring tag. Easily log tag success and/or failures for events to preview mode, Cloud Logging, and BigQuery|God of the clouds|
 
 ## Combining solutions
 
