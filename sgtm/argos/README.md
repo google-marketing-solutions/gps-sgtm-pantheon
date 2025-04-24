@@ -36,7 +36,7 @@ and allows you to monitor them through GA4, BigQuery, and/or Cloud Logging.
 
 ### Tag Set-up
 
-1. Download the [crictial_gtag_monitoring.tpl](./crictial_gtag_monitoring.tpl) template to
+1. Download the [critical_gtag_monitoring.tpl](./critical_gtag_monitoring.tpl) template to
    your local machine. Make sure the file is saved with the extension `.tpl`.
 2. Open [Google Tag Manager](https://tagmanager.google.com) and select your
    server-side container.
