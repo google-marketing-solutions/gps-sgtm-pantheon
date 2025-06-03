@@ -6,7 +6,7 @@
   "version": 1,
   "securityGroups": [],
   "displayName": "Dioscuri - Get Gemini Response",
-  "description": "Variable which returns the response from Gemini 1.0 Pro or 1.5 Pro.",
+  "description": "Variable which returns the response from Gemini API.",
   "containerContexts": [
     "SERVER"
   ]
