@@ -14,6 +14,10 @@ given to twin brothers Castor and Pollux. In Latin they are known as the Gemini.
 Ready to start implementing this solution? You can follow the guide below which 
 outlines how Server Side Google Tag Manager (sGTM) can be used with Gemini.
 
+## Updating Models
+Be aware that Google regularly adds new gemini models. If you would like to add models not available in this template
+you can do so by updating the template in sGTM. See [details about model versions](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions#gemini-model-versions).
+
 ## Prerequisites
 
 -   Server Side Google Tag Manager
@@ -48,7 +52,7 @@ More details can be found on this [quickstart guide](https://cloud.google.com/ve
         hidden depending on your selection
    - d. Add text prompts. You can add as many as you like. You can include data 
         from other variables
-   - e. If using Gemini 1.5 Pro you can include file prompts. Upload files to 
+   - e. If desire you can also upload files to 
         cloud storage and get their Google Cloud file path which will start with
         gs://. Ensure you select the correct file type. Any file types not listed
         are not available. See [documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
