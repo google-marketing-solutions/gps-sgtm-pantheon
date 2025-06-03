@@ -45,12 +45,36 @@ ___TEMPLATE_PARAMETERS___
     "macrosInSelect": false,
     "selectItems": [
       {
-        "value": "gemini-1.5-pro",
-        "displayValue": "Gemini 1.5 Pro"
+        "value": "gemini-2.0-flash-001",
+        "displayValue": "Gemini 2.0 Flash 1"
       },
       {
-        "value": "gemini-1.0-pro",
-        "displayValue": "Gemini 1.0 Pro"
+        "value": "gemini-2.0-flash-lite-001",
+        "displayValue": "Gemini 2.0 Flash Lite 1"
+      },
+      {
+        "value": "gemini-1.5-pro-002",
+        "displayValue": "Gemini 1.5 Pro 2"
+      },
+      {
+        "value": "gemini-1.5-flash-002",
+        "displayValue": "Gemini 1.5 Flash 2"
+      },
+      {
+        "value": "gemini-embedding-001",
+        "displayValue": "Gemini Embedding 1"
+      },
+      {
+        "value": "text-embedding-005",
+        "displayValue": "Text Embedding 5"
+      },
+      {
+        "value": "text-multilingual-embedding-002",
+        "displayValue": "Text Multilingual Embedding 2"
+      },
+      {
+        "value": "multimodalembedding@001",
+        "displayValue": "Multimodal Embedding 1"
       }
     ],
     "simpleValueType": true
@@ -175,13 +199,6 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "newRowButtonText": "Add file"
-      }
-    ],
-    "enablingConditions": [
-      {
-        "paramName": "geminiModel",
-        "paramValue": "gemini-1.5-pro",
-        "type": "EQUALS"
       }
     ]
   },
