@@ -227,6 +227,28 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_SERVER___
 
+// Copyright 2024 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+/**
+ * @fileoverview sGTM variable tag that uses data from Firestore to calculate a
+ * new conversion value based on items in the datalayer.
+ * @see {@link https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag#purchase_item}
+ * @version 3.0.0
+ */
+
 //Import Libraries
 const addEventCallback = require('addEventCallback');
 const bigQuery = require('BigQuery');
@@ -265,7 +287,7 @@ addEventCallback((containerId, eventData) => {
       id: tag.id,
       name: tag.name,
       status: tag.status,
-      execustion_time: tag.executionTime
+      execution_time: tag.executionTime
     }));
   } else if (data.monitoringMode == "monitorAllTagsExceptExcludedTags") {
     //Checks if tag metadata includes flag to include tags
@@ -273,7 +295,7 @@ addEventCallback((containerId, eventData) => {
       id: tag.id,
       name: tag.name,
       status: tag.status,
-      execustion_time: tag.executionTime
+      execution_time: tag.executionTime
     }));
   } else if (data.monitoringMode == "monitorNoTagsExceptIncludedTags") {
     //Checks if tag meta data includes flag to include tag
@@ -281,11 +303,11 @@ addEventCallback((containerId, eventData) => {
       id: tag.id,
       name: tag.name,
       status: tag.status,
-      execustion_time: tag.executionTime
+      execution_time: tag.executionTime
     }));
   }
   
-  //Creates event object with smaller amount of event info. Schema matches BigQuery scheme
+  //Creates event object with smaller amount of event info. Schema matches BigQuery schema
   //Update this object if your BigQuery table has a different schema. You may also need to update the tags object schema above if you have different column names
   const event = {
     event_name: event_name,
