@@ -55,7 +55,11 @@ These solutions allow you to monitor data in sGTM more easily.
 
 |Solution|One-liner|Use Case|Why is it called that?|
 |---|---|---|---|
+|[Zeus](./sgtm/zeus/README.md)|sGTM monitoring master tag|Monitor the status of tags (i.e. whether they fired successfully or failed) and then log this to preview mode, Cloud Logging, and Big Query|The solution work extensively with Cloud Logging, and Zeus is the god of the clouds|
+|[Theia](./sgtm/theia/README.md)|Quick logging tag|Easily log anything to the sGTM console without having to write your own templates|Theia is is the Greek goddess of sight and vision|
 |[Argos](./sgtm/argos/README.md)|Monitor critical gTag settings|Monitor settings related to gTag configuration and log errors to the console, GA4, BigQuery, and/or Cloud Logging. Settings relate to domain, region, consent, privacy, and gTag measurment ID configuration|Argos is an all-seeing many-eye giant|
+
+
 
 ## Combining solutions
 
