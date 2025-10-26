@@ -8,7 +8,7 @@ Let's get started!
 
 The following diagram illustrates the flow of data with this setup:
 
-![Architecture Diagram](sgtm/harpocrates/assets/diagram.png)
+![Architecture Diagram](./assets/diagram.png)
 
 Here's a step-by-step breakdown of how the data flows through the system:
 
