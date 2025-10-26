@@ -37,6 +37,7 @@ the event data sent to sGTM when the hit is sent from the client-side tag.
 |[Apollo](./sgtm/apollo/README.md)|Get data from a Google sheet|Get data from a Google Sheet in realtime to generate lead gen value for lead scoring.|Greek god of knowledge, which can be stored in Sheets|
 |[Cerberus](https://github.com/GoogleCloudPlatform/recaptcha-enterprise-google-tag-manager)|Get reCAPTCHA scores in sGTM|Integrate reCAPTCHA to filter bot-generated events & suspicious activity. Also, improves data models by using bot-likelihood signals|The multi-headed dog who guards the gates of the Underworld|
 |[Dioscuri](./sgtm/dioscuri/README.md)|Get response from Gemini 1.0 Pro and Gemini 1.5 Pro APIs|Use realtime data from your website as well as customer & business data stored in the cloud to get responses from Gemini 1.0 Pro and 1.5 Pro|The Greek name for Gemini|
+|[Harpocrates](./sgtm/harpocrates/README.md)|Get encrypted dynamic profit data |Decrypt and bid to profit or other sensitive values for online transactions without exposing data|the god of silence, secrets and confidentiality. This enables value bidding for dynamic values|
 
 ### Send Data
 
