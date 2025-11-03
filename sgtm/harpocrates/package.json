@@ -1,0 +1,15 @@
+{
+  "name": "sgtm-decryptor",
+  "version": "1.0.0",
+  "description": "Cloud Function to decrypt AES-256 values for sGTM.",
+  "main": "index.js",
+  "engines": {
+    "node": "18"
+  },
+  "scripts": {
+    "start": "functions-framework --target=decryptValue"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.0.0"
+  }
+}
