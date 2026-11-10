@@ -94,11 +94,11 @@ const createMockRes = () => {
   assert.strictEqual(res.statusCode, 401, 'Expected 401 for empty Bearer token');
 }
 
-// 3. Accepts authenticated POST request and returns decrypted plaintext
+// 3. Accepts authenticated POST request (including Cloud Run GFE lowercase 'bearer') and returns decrypted plaintext
 {
   const req = {
     method: 'POST',
-    headers: { authorization: 'Bearer valid-oidc-id-token' },
+    headers: { authorization: 'bearer header.payload.SIGNATURE_REMOVED_BY_GOOGLE' },
     body: { encryptedValue: encryptedText },
   };
   const res = createMockRes();

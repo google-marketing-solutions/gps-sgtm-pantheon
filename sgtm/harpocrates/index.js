@@ -70,12 +70,7 @@ exports.decryptValue = (req, res) => {
   // misconfigured. The sGTM template must attach a Google-signed ID token
   // via getGoogleAuth().
   const authHeader = req.headers && (req.headers.authorization || req.headers.Authorization);
-  if (
-    !authHeader ||
-    typeof authHeader !== 'string' ||
-    !authHeader.startsWith('Bearer ') ||
-    authHeader.slice(7).trim() === ''
-  ) {
+  if (!authHeader || typeof authHeader !== 'string' || !/^bearer\s+\S+/i.test(authHeader)) {
     return res.status(401).send('Unauthorized: missing Authorization header.');
   }
 
