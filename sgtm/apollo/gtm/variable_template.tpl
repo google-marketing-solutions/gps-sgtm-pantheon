@@ -65,6 +65,7 @@ const sendHttpRequest = require("sendHttpRequest");
 const setResponseBody = require("setResponseBody");
 const setResponseHeader = require("setResponseHeader");
 const setResponseStatus = require("setResponseStatus");
+const encodeUriComponent = require("encodeUriComponent");
 const Promise = require("Promise");
 const JSON = require("JSON");
 const logToConsole = require("logToConsole");
@@ -74,9 +75,9 @@ logToConsole("address :" + data.address);
 logToConsole("job :" + data.job);
 
 const SPREADSHEET_ID = data.spreadsheet_id;
-const SHEET_NAME = data.job;
-const COLUMN_NO = data.address;
-const ROW_NO = data.age;
+const SHEET_NAME = encodeUriComponent(data.job);
+const COLUMN_NO = encodeUriComponent(data.address);
+const ROW_NO = encodeUriComponent(data.age);
 const TARGET = "!" + COLUMN_NO + ROW_NO + ":" + COLUMN_NO + ROW_NO;
 
 const url = "https://sheets.googleapis.com/v4/spreadsheets/" + SPREADSHEET_ID + "/values/" + SHEET_NAME + TARGET;
