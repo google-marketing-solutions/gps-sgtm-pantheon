@@ -11,8 +11,9 @@
 # limitations under the License.
 
 # This script deploys the decryptValue function to Google Cloud Functions
-# with IAM authentication enabled (--no-allow-unauthenticated) and configures
-# the sGTM service account permissions.
+# with IAM authentication enabled (--no-allow-unauthenticated), auto-detects
+# the sGTM service account, configures IAM permissions, and pre-populates
+# encryptedValue.tpl for one-click import into Google Tag Manager.
 
 if ! command -v gcloud >/dev/null 2>&1 && [ -x "$HOME/google-cloud-sdk/bin/gcloud" ]; then
   export PATH="$HOME/google-cloud-sdk/bin:$PATH"
@@ -25,7 +26,6 @@ if [ -f ".env" ]; then
 fi
 
 # --- Configuration ---
-# Function name, region, and project ID
 FUNCTION_NAME="${FUNCTION_NAME:-decryptValue}"
 REGION="${REGION:-us-central1}"
 if [ -z "$PROJECT_ID" ]; then
@@ -37,14 +37,36 @@ if [ -z "$PROJECT_ID" ]; then
   read -p "Enter your Google Cloud Project ID: " PROJECT_ID
 fi
 
-# DECRYPTION_KEY and IV will be loaded from the environment by the export command
-# If they are still empty, prompt the user.
 if [ -z "$DECRYPTION_KEY" ]; then
   read -p "Enter your DECRYPTION_KEY (64 hex characters): " DECRYPTION_KEY
 fi
 
 if [ -z "$IV" ]; then
   read -p "Enter your IV (32 hex characters): " IV
+fi
+
+# --- Auto-Detect sGTM Service Account Email ---
+if [ -z "$SGTM_SERVICE_ACCOUNT" ] && [ -n "$PROJECT_ID" ]; then
+  echo "Auto-detecting sGTM Service Account in project '$PROJECT_ID'..."
+  SGTM_SERVICE_ACCOUNT=$(gcloud run services list \
+    --project="$PROJECT_ID" \
+    --filter="metadata.name:server-side-tagging OR spec.template.spec.containers.image:gtm-cloud-image" \
+    --format="value(spec.template.spec.serviceAccountName)" \
+    --limit=1 2>/dev/null)
+
+  if [ -z "$SGTM_SERVICE_ACCOUNT" ]; then
+    PROJECT_NUMBER=$(gcloud projects describe "$PROJECT_ID" --format="value(projectNumber)" 2>/dev/null)
+    if [ -n "$PROJECT_NUMBER" ]; then
+      SGTM_SERVICE_ACCOUNT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
+    fi
+  fi
+
+  if [ -n "$SGTM_SERVICE_ACCOUNT" ]; then
+    echo "Detected sGTM Service Account: $SGTM_SERVICE_ACCOUNT"
+    if [ -f ".env" ] && ! grep -q "^SGTM_SERVICE_ACCOUNT=" .env; then
+      echo "SGTM_SERVICE_ACCOUNT=$SGTM_SERVICE_ACCOUNT" >> .env
+    fi
+  fi
 fi
 
 if [ -z "$SGTM_SERVICE_ACCOUNT" ]; then
@@ -72,8 +94,16 @@ if [[ ! "$SGTM_SERVICE_ACCOUNT" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2
   exit 1
 fi
 
-# --- Step 1: Enable Required APIs & Pre-Migration IAM Binding ---
-echo "Enabling IAM Service Account Credentials API in project '$PROJECT_ID'..."
+# --- Pre-populate sGTM Service Account Default in encryptedValue.tpl ---
+if [ -f "encryptedValue.tpl" ]; then
+  sed -i.bak \
+    -e "s|\"name\": \"serviceAccountEmail\",|\"name\": \"serviceAccountEmail\",|" \
+    -e "s|const DEFAULT_SERVICE_ACCOUNT_EMAIL = '.*';|const DEFAULT_SERVICE_ACCOUNT_EMAIL = '$SGTM_SERVICE_ACCOUNT';|" \
+    encryptedValue.tpl && rm -f encryptedValue.tpl.bak
+fi
+
+# --- Step 1: Enable Required APIs & Grant OIDC Token Creator Role ---
+echo "Enabling required APIs in project '$PROJECT_ID'..."
 gcloud services enable iamcredentials.googleapis.com cloudfunctions.googleapis.com run.googleapis.com \
   --project "$PROJECT_ID"
 
@@ -106,7 +136,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # --- Step 3: Lock Down Legacy Public Access & Grant Invoker Role ---
-echo "Ensuring public (allUsers) access is removed and granting invoker access to '$SGTM_SERVICE_ACCOUNT'..."
+echo "Removing public (allUsers) access and granting invoker access to '$SGTM_SERVICE_ACCOUNT'..."
 gcloud functions remove-invoker-policy-binding "$FUNCTION_NAME" \
   --region="$REGION" \
   --project="$PROJECT_ID" \
@@ -130,6 +160,10 @@ gcloud run services add-iam-policy-binding "$CLOUD_RUN_SERVICE" \
   --member="serviceAccount:$SGTM_SERVICE_ACCOUNT" \
   --role="roles/run.invoker" >/dev/null 2>&1 || true
 
-echo "Function deployed and secured successfully."
+echo ""
+echo "=================================================================="
+echo "Function deployed and secured successfully!"
 echo "Endpoint URL: https://$REGION-$PROJECT_ID.cloudfunctions.net/$FUNCTION_NAME"
 echo "Authorized sGTM Service Account: $SGTM_SERVICE_ACCOUNT"
+echo "Next Step: Import 'encryptedValue.tpl' into your sGTM Templates and Publish."
+echo "=================================================================="

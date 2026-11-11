@@ -69,26 +69,18 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "TEXT",
     "name": "serviceAccountEmail",
-    "displayName": "sGTM Service Account Email",
-    "help": "The email address of the Google Cloud Service Account running your sGTM container (e.g., 123456789-compute@developer.gserviceaccount.com). Used to mint an OIDC ID token to invoke the authenticated Cloud Function.",
+    "displayName": "sGTM Service Account Email (Optional if deployed via deploy.sh)",
+    "help": "The email address of the Google Cloud Service Account running your sGTM container. Automatically pre-populated when running deploy.sh.",
     "simpleValueType": true,
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
-    ]
+    "defaultValue": ""
   },
   {
     "type": "TEXT",
     "name": "encryptedValueEventData",
-    "displayName": "Encrypted Value Event Data",
-    "help": "The encrypted value (or event data variable) to be decrypted.",
+    "displayName": "Encrypted Value Event Data (Optional)",
+    "help": "The encrypted value (or event data variable) to be decrypted. If left blank, automatically reads 'encryptedValueEventData' from incoming event data.",
     "simpleValueType": true,
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
-    ]
+    "defaultValue": ""
   },
   {
     "type": "TEXT",
@@ -104,18 +96,22 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_SERVER___
 
 const encodeUriComponent = require('encodeUriComponent');
+const getEventData = require('getEventData');
 const getGoogleAuth = require('getGoogleAuth');
 const JSON = require('JSON');
 const logToConsole = require('logToConsole');
 const makeNumber = require('makeNumber');
 const sendHttpRequest = require('sendHttpRequest');
 
+// Populated automatically by deploy.sh when deploying the Cloud Function.
+const DEFAULT_SERVICE_ACCOUNT_EMAIL = '';
+
 // Build the URL for the decryption Cloud Function.
 const url = 'https://' + data.cloudRegion + '-' + data.projectId + '.cloudfunctions.net/' + data.functionName;
 
-const encryptedValue = data.encryptedValueEventData;
+const encryptedValue = data.encryptedValueEventData || getEventData('encryptedValueEventData');
 const defaultValue = data.defaultValueOnError;
-const serviceAccountEmail = data.serviceAccountEmail;
+const serviceAccountEmail = data.serviceAccountEmail || DEFAULT_SERVICE_ACCOUNT_EMAIL;
 
 // Ensure required parameters are provided.
 if (!data.projectId || !data.cloudRegion || !data.functionName || !serviceAccountEmail || !encryptedValue) {
@@ -197,6 +193,39 @@ return sendHttpRequest(iamUrl, iamRequestOptions, iamPostBody)
 ___SERVER_PERMISSIONS___
 
 [
+  {
+    "instance": {
+      "key": {
+        "publicId": "read_event_data",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "eventDataAccess",
+          "value": {
+            "type": 1,
+            "string": "specific"
+          }
+        },
+        {
+          "key": "keyPatterns",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "encryptedValueEventData"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
   {
     "instance": {
       "key": {
@@ -417,9 +446,10 @@ setup: |-
   const JSON = require('JSON');
   const Promise = require('Promise');
   mock('getGoogleAuth', () => ({}));
+  mock('getEventData', () => '');
 
 
 ___NOTES___
 
-v2: Added OIDC ID token authentication via getGoogleAuth and IAM Credentials API.
+v2: Added OIDC ID token authentication via getGoogleAuth and IAM Credentials API, and auto-fallback to getEventData('encryptedValueEventData').
 v1: Initial release of the AES-256 Decryptor variable.
