@@ -62,9 +62,6 @@ ___SANDBOXED_JS_FOR_SERVER___
 
 const getGoogleAuth = require("getGoogleAuth");
 const sendHttpRequest = require("sendHttpRequest");
-const setResponseBody = require("setResponseBody");
-const setResponseHeader = require("setResponseHeader");
-const setResponseStatus = require("setResponseStatus");
 const encodeUriComponent = require("encodeUriComponent");
 const Promise = require("Promise");
 const JSON = require("JSON");
@@ -91,7 +88,7 @@ const auth = getGoogleAuth({
 });
 
 const requestOptions = {
-  headers: {key: "value"},
+  headers: {},
   method: "GET",
   authorization: auth,
   timeout: 5000,
@@ -99,9 +96,6 @@ const requestOptions = {
 
 // request.
 return sendHttpRequest(url, requestOptions).then((result) => {
-  setResponseStatus(result.statusCode);
-  setResponseBody(result.body);
-  setResponseHeader('cache-control', result.headers['cache-control']);
   const result_object = JSON.parse(result.body);
   const return_value = result_object.values[0][0];
   logToConsole("return_value :" + return_value);
