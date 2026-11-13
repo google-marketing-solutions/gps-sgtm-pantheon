@@ -1,19 +1,15 @@
-/**
-
-@license
-Copyright 2025 Google LLC
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
+/*
+ Copyright 2026 Google LLC
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+      https://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
 */
-
 
 
 ___INFO___
@@ -24,7 +20,7 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "AES-256 Decryptor Variable",
-  "description": "Takes an AES-256 encrypted value and sends it to a Google Cloud Function for decryption.",
+  "description": "Takes an AES-256 encrypted value and sends it to an authenticated Google Cloud Function for decryption.",
   "containerContexts": [
     "SERVER"
   ]
@@ -62,7 +58,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "TEXT",
     "name": "functionName",
     "displayName": "Cloud Function Name",
-    "help": "The name of the deployed Cloud Function (e.g., sgtm-decryptor).",
+    "help": "The name of the deployed Cloud Function (e.g., decryptValue).",
     "simpleValueType": true,
     "valueValidators": [
       {
@@ -72,15 +68,19 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "encryptedValueEventData",
-    "displayName": "Encrypted Value Event Data",
-    "help": "The key in the event data that holds the encrypted value.",
+    "name": "serviceAccountEmail",
+    "displayName": "sGTM Service Account Email (Optional if deployed via deploy.sh)",
+    "help": "The email address of the Google Cloud Service Account running your sGTM container. Automatically pre-populated when running deploy.sh.",
     "simpleValueType": true,
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
-    ]
+    "defaultValue": ""
+  },
+  {
+    "type": "TEXT",
+    "name": "encryptedValueEventData",
+    "displayName": "Encrypted Value Event Data (Optional)",
+    "help": "The encrypted value (or event data variable) to be decrypted. If left blank, automatically reads 'encryptedValueEventData' from incoming event data.",
+    "simpleValueType": true,
+    "defaultValue": ""
   },
   {
     "type": "TEXT",
@@ -95,52 +95,94 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_SERVER___
 
+const encodeUriComponent = require('encodeUriComponent');
+const getEventData = require('getEventData');
+const getGoogleAuth = require('getGoogleAuth');
 const JSON = require('JSON');
 const logToConsole = require('logToConsole');
+const makeNumber = require('makeNumber');
 const sendHttpRequest = require('sendHttpRequest');
-const makeNumber = require("makeNumber");
+
+// Populated automatically by deploy.sh when deploying the Cloud Function.
+const DEFAULT_SERVICE_ACCOUNT_EMAIL = '';
 
 // Build the URL for the decryption Cloud Function.
 const url = 'https://' + data.cloudRegion + '-' + data.projectId + '.cloudfunctions.net/' + data.functionName;
 
-const encryptedValue = data.encryptedValueEventData;
+const encryptedValue = data.encryptedValueEventData || getEventData('encryptedValueEventData');
 const defaultValue = data.defaultValueOnError;
+const serviceAccountEmail = data.serviceAccountEmail || DEFAULT_SERVICE_ACCOUNT_EMAIL;
 
 // Ensure required parameters are provided.
-if (!data.projectId || !data.cloudRegion || !data.functionName || !encryptedValue) {
-  logToConsole('Error: Project ID, Region, Function Name, or Encrypted Value is not provided.');
+if (!data.projectId || !data.cloudRegion || !data.functionName || !serviceAccountEmail || !encryptedValue) {
+  logToConsole('Error: Project ID, Region, Function Name, Service Account Email, or Encrypted Value is not provided.');
   return defaultValue;
 }
 
-// Prepare the data to be sent to the Cloud Function.
-const postBodyData = {
-  'encryptedValue': encryptedValue
-};
-const postBody = JSON.stringify(postBodyData);
+// Retrieve Google credentials from the service account running the sGTM container.
+const auth = getGoogleAuth({
+  scopes: ['https://www.googleapis.com/auth/cloud-platform']
+});
 
-// Set the request options.
-const requestOptions = {
+// Step 1: Mint a Google-signed OIDC ID token with audience set to the Cloud Function URL.
+const iamUrl = 'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/' +
+  encodeUriComponent(serviceAccountEmail) + ':generateIdToken';
+const iamPostBody = JSON.stringify({
+  audience: url,
+  includeEmail: true
+});
+const iamRequestOptions = {
   headers: {
     'Content-Type': 'application/json'
   },
-  method: 'POST'
+  method: 'POST',
+  authorization: auth
 };
 
-// Make the request to the decryption Cloud Function.
-return sendHttpRequest(url, requestOptions, postBody)
-  .then(response => {
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      const responseBody = JSON.parse(response.body);
-      // The Cloud Function should return a JSON object with a 'decryptedValue' key.
-      if (responseBody.decryptedValue !== undefined) {
-        return makeNumber(responseBody.decryptedValue);
-      }
-      logToConsole('Error: "decryptedValue" key not found in response body.');
-      return defaultValue;
-    } else {
-      logToConsole('Decryption request failed with status code: ', response.statusCode);
+// Prepare the data to be sent to the Cloud Function.
+const postBodyData = {
+  encryptedValue: encryptedValue
+};
+const postBody = JSON.stringify(postBodyData);
+
+return sendHttpRequest(iamUrl, iamRequestOptions, iamPostBody)
+  .then(iamResponse => {
+    if (iamResponse.statusCode < 200 || iamResponse.statusCode >= 300) {
+      logToConsole('Failed to generate OIDC ID token with status code: ', iamResponse.statusCode);
       return defaultValue;
     }
+
+    const iamResponseBody = JSON.parse(iamResponse.body);
+    const idToken = iamResponseBody && iamResponseBody.token;
+    if (!idToken) {
+      logToConsole('Error: "token" key not found in IAM generateIdToken response.');
+      return defaultValue;
+    }
+
+    // Step 2: Make the authenticated request to the decryption Cloud Function.
+    const requestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + idToken
+      },
+      method: 'POST'
+    };
+
+    return sendHttpRequest(url, requestOptions, postBody)
+      .then(response => {
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          const responseBody = JSON.parse(response.body);
+          // The Cloud Function should return a JSON object with a 'decryptedValue' key.
+          if (responseBody && responseBody.decryptedValue !== undefined) {
+            return makeNumber(responseBody.decryptedValue);
+          }
+          logToConsole('Error: "decryptedValue" key not found in response body.');
+          return defaultValue;
+        } else {
+          logToConsole('Decryption request failed with status code: ', response.statusCode);
+          return defaultValue;
+        }
+      });
   })
   .catch((error) => {
     logToConsole('Error calling decryption Cloud Function at ' + url + '. Error: ', error);
@@ -154,6 +196,39 @@ ___SERVER_PERMISSIONS___
   {
     "instance": {
       "key": {
+        "publicId": "read_event_data",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "eventDataAccess",
+          "value": {
+            "type": 1,
+            "string": "specific"
+          }
+        },
+        {
+          "key": "keyPatterns",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "encryptedValueEventData"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
         "publicId": "send_http",
         "versionId": "1"
       },
@@ -162,7 +237,49 @@ ___SERVER_PERMISSIONS___
           "key": "allowedUrls",
           "value": {
             "type": 1,
-            "string": "any"
+            "string": "specific"
+          }
+        },
+        {
+          "key": "urls",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "https://*.cloudfunctions.net/*"
+              },
+              {
+                "type": 1,
+                "string": "https://iamcredentials.googleapis.com/*"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "use_google_credentials",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "allowedScopes",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "https://www.googleapis.com/auth/cloud-platform"
+              }
+            ]
           }
         }
       ]
@@ -202,26 +319,38 @@ scenarios:
       projectId: "my-gcp-project",
       cloudRegion: "us-central1",
       functionName: "sgtm-decryptor",
+      serviceAccountEmail: "sgtm-sa@my-gcp-project.iam.gserviceaccount.com",
       encryptedValueEventData: "U2FsdGVkX1...",
       defaultValueOnError: "error_value"
     };
 
-    // Simulate a successful response from the Cloud Function
     mock('sendHttpRequest', (url, options, body) => {
+      if (url.indexOf('https://iamcredentials.googleapis.com/') === 0) {
+        const iamReq = JSON.parse(body);
+        assertThat(iamReq.audience).isEqualTo("https://us-central1-my-gcp-project.cloudfunctions.net/sgtm-decryptor");
+        return Promise.create((resolve) => {
+          resolve({
+            statusCode: 200,
+            body: JSON.stringify({ token: "mock-oidc-id-token" })
+          });
+        });
+      }
+
       assertThat(url).isEqualTo("https://us-central1-my-gcp-project.cloudfunctions.net/sgtm-decryptor");
+      assertThat(options.headers.Authorization).isEqualTo("Bearer mock-oidc-id-token");
       const requestBody = JSON.parse(body);
       assertThat(requestBody.encryptedValue).isEqualTo("U2FsdGVkX1...");
 
       return Promise.create((resolve) => {
         resolve({
           statusCode: 200,
-          body: JSON.stringify({ decryptedValue: "my_secret_value" })
+          body: JSON.stringify({ decryptedValue: "999" })
         });
       });
     });
 
     runCode(mockVariableData).then((result) => {
-      assertThat(result).isEqualTo("my_secret_value");
+      assertThat(result).isEqualTo(999);
     });
 - name: Failed Decryption (Server Error)
   code: |
@@ -229,12 +358,21 @@ scenarios:
       projectId: "my-gcp-project",
       cloudRegion: "us-central1",
       functionName: "sgtm-decryptor",
+      serviceAccountEmail: "sgtm-sa@my-gcp-project.iam.gserviceaccount.com",
       encryptedValueEventData: "U2FsdGVkX1...",
       defaultValueOnError: "error_value"
     };
 
-    // Simulate a server error from the Cloud Function
     mock('sendHttpRequest', (url, options, body) => {
+      if (url.indexOf('https://iamcredentials.googleapis.com/') === 0) {
+        return Promise.create((resolve) => {
+          resolve({
+            statusCode: 200,
+            body: JSON.stringify({ token: "mock-oidc-id-token" })
+          });
+        });
+      }
+
       assertThat(url).isEqualTo("https://us-central1-my-gcp-project.cloudfunctions.net/sgtm-decryptor");
       return Promise.create((resolve) => {
         resolve({
@@ -253,17 +391,50 @@ scenarios:
       projectId: "my-gcp-project",
       cloudRegion: "us-central1",
       functionName: "sgtm-decryptor",
+      serviceAccountEmail: "sgtm-sa@my-gcp-project.iam.gserviceaccount.com",
       encryptedValueEventData: "U2FsdGVkX1...",
       defaultValueOnError: "error_value"
     };
 
-    // Simulate a successful response but with the wrong JSON key
     mock('sendHttpRequest', (url, options, body) => {
+      if (url.indexOf('https://iamcredentials.googleapis.com/') === 0) {
+        return Promise.create((resolve) => {
+          resolve({
+            statusCode: 200,
+            body: JSON.stringify({ token: "mock-oidc-id-token" })
+          });
+        });
+      }
+
       assertThat(url).isEqualTo("https://us-central1-my-gcp-project.cloudfunctions.net/sgtm-decryptor");
       return Promise.create((resolve) => {
         resolve({
           statusCode: 200,
-          body: JSON.stringify({ wrongKey: "some_value" }) // The key is not 'decryptedValue'
+          body: JSON.stringify({ wrongKey: "some_value" })
+        });
+      });
+    });
+
+    runCode(mockVariableData).then((result) => {
+      assertThat(result).isEqualTo("error_value");
+    });
+- name: Failed Decryption (IAM Token Generation Error)
+  code: |
+    const mockVariableData = {
+      projectId: "my-gcp-project",
+      cloudRegion: "us-central1",
+      functionName: "sgtm-decryptor",
+      serviceAccountEmail: "sgtm-sa@my-gcp-project.iam.gserviceaccount.com",
+      encryptedValueEventData: "U2FsdGVkX1...",
+      defaultValueOnError: "error_value"
+    };
+
+    mock('sendHttpRequest', (url) => {
+      assertThat(url).isEqualTo("https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/sgtm-sa%40my-gcp-project.iam.gserviceaccount.com:generateIdToken");
+      return Promise.create((resolve) => {
+        resolve({
+          statusCode: 403,
+          body: "Permission Denied"
         });
       });
     });
@@ -274,8 +445,11 @@ scenarios:
 setup: |-
   const JSON = require('JSON');
   const Promise = require('Promise');
+  mock('getGoogleAuth', () => ({}));
+  mock('getEventData', () => '');
 
 
 ___NOTES___
 
+v2: Added OIDC ID token authentication via getGoogleAuth and IAM Credentials API, and auto-fallback to getEventData('encryptedValueEventData').
 v1: Initial release of the AES-256 Decryptor variable.
