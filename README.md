@@ -74,6 +74,33 @@ to advertising platforms using sGTM's built-in tags but could also be stored in
 Firestore and/or BigQuery by [Hephaestus](./sgtm/hephaestus/README.md) and 
 [Chaos](./sgtm/chaos/README.md).
 
+## Usage telemetry
+
+Usage telemetry is **optional and off by default**. It helps Google understand
+how widely these solutions are used.
+
+- **How to opt in:** every template in this repository has a "Usage telemetry
+  (optional)" section with a "Share usage telemetry with Google" checkbox. It
+  is unticked unless you tick it. [Harpocrates](./sgtm/harpocrates/README.md)
+  also asks once when you run its `deploy.sh`.
+- **What is sent:** the solution name, a random event ID, the ID of your
+  server container and, only if you enter it, your Google Ads Customer ID.
+- **What is never sent:** event data, user data, or anything the template
+  reads or writes (for example Firestore documents, BigQuery rows, cookies,
+  keys, or decrypted values).
+- **How often:** at most one event per day per template for each running
+  server instance, so it adds no request to normal event processing beyond
+  that.
+- **How to opt out:** untick the checkbox and publish your container.
+
+The event is sent to Google Analytics using the
+[Tadau](https://github.com/google-marketing-solutions/tadau) event format. If
+the request fails, the template carries on as normal.
+
+Templates that you imported before this option existed are unchanged and send
+nothing. Soteria, Phoebe and Cerberus live in their own repositories and are
+not covered by this section.
+
 ## Developer
 
 To update the git submodules run:

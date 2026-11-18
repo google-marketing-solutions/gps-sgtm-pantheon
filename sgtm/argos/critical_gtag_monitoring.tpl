@@ -269,6 +269,34 @@ ___TEMPLATE_PARAMETERS___
       }
     ],
     "help": "sGTM console logs are automatically sent to Google Cloud Logging unless disabled. This section allows you to add a custom error message to the start of the log to allow you to filter these logs in Logging as required. Instructions on how to enable and disable specific logs can be found here: https://developers.google.com/tag-platform/tag-manager/server-side/cloud-run-setup-guide?provisioning\u003dmanual#console-logging"
+  },
+  {
+    "type": "GROUP",
+    "name": "usageTelemetryGroup",
+    "displayName": "Usage telemetry (optional)",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
+      {
+        "type": "CHECKBOX",
+        "name": "shareUsageTelemetry",
+        "checkboxText": "Share usage telemetry with Google",
+        "simpleValueType": true,
+        "help": "Off by default. If ticked, this template sends at most one usage event per day per server instance to Google. The event contains the solution name, this container\u0027s ID and, if entered below, your Google Ads Customer ID. No event data is ever sent."
+      },
+      {
+        "type": "TEXT",
+        "name": "telemetryGoogleAdsCustomerId",
+        "displayName": "Google Ads Customer ID (optional, format XXX-XXX-XXXX)",
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "shareUsageTelemetry",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ]
+      }
+    ]
   }
 ]
 
@@ -285,6 +313,57 @@ const bigQuery = require("BigQuery");
 const getTimestampMillis = require("getTimestampMillis");
 const JSON = require("JSON");
 const makeString = require("makeString");
+
+// --- Optional usage telemetry ---
+// Off unless "Share usage telemetry with Google" is ticked. Sends at most one
+// SOLUTION_USAGE event per day per server instance. It never includes event
+// data, and a failure never affects the result of this template.
+const telemetrySendHttpRequest = require('sendHttpRequest');
+const telemetryStorage = require('templateDataStorage');
+const telemetryGetContainerVersion = require('getContainerVersion');
+const telemetryGenerateRandom = require('generateRandom');
+const telemetryGetTimestampMillis = require('getTimestampMillis');
+const telemetryJson = require('JSON');
+const telemetryMakeString = require('makeString');
+const sendUsageTelemetry = (solution) => {
+  if (data.shareUsageTelemetry !== true) return;
+  const storageKey = 'pantheon_usage_telemetry_' + solution;
+  const now = telemetryGetTimestampMillis();
+  const lastSent = telemetryStorage.getItemCopy(storageKey);
+  if (lastSent && now - lastSent < 86400000) return;
+  telemetryStorage.setItemCopy(storageKey, now);
+  const randomId = () =>
+    telemetryMakeString(now) + '.' + telemetryMakeString(telemetryGenerateRandom(100000000, 999999999));
+  const params = {
+    app: 'sGTM Pantheon',
+    is_agent_event: false,
+    non_personalized_ads: false,
+    external_event_id: randomId(),
+    label: solution,
+  };
+  const containerId = telemetryGetContainerVersion().containerId;
+  if (containerId) params.th_container_id = telemetryMakeString(containerId);
+  // External Customer IDs must keep their hyphens (XXX-XXX-XXXX).
+  const customerId = telemetryMakeString(data.telemetryGoogleAdsCustomerId || '');
+  let isCustomerId = customerId.length === 12;
+  for (let i = 0; isCustomerId && i < 12; i++) {
+    const character = customerId.charAt(i);
+    isCustomerId = i === 3 || i === 7 ? character === '-' : '0123456789'.indexOf(character) >= 0;
+  }
+  if (isCustomerId) params.th_google_ads_customer_id = customerId;
+  if (!params.th_container_id && !params.th_google_ads_customer_id) return;
+  telemetrySendHttpRequest(
+    'https://www.google-analytics.com/mp/collect?measurement_id=G-Z2TKLQZ79K&api_secret=S7toNnNZQPWzViq44q_8gg',
+    {method: 'POST', headers: {'Content-Type': 'application/json'}, timeout: 2000},
+    telemetryJson.stringify({
+      client_id: randomId(),
+      non_personalized_ads: true,
+      events: [{name: 'SOLUTION_USAGE', params: params}],
+    })
+  ).then(() => {}, () => {});
+};
+sendUsageTelemetry('argos');
+// --- End of optional usage telemetry ---
 
 //Helper function to check if input is in a comma-separated list
 function isValueInList(listString, valueToCheck) {
@@ -535,6 +614,18 @@ ___SERVER_PERMISSIONS___
             "type": 8,
             "boolean": true
           }
+        },
+        {
+          "key": "urls",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "https://www.google-analytics.com/*"
+              }
+            ]
+          }
         }
       ]
     },
@@ -598,6 +689,32 @@ ___SERVER_PERMISSIONS___
           }
         }
       ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_template_storage",
+        "versionId": "1"
+      },
+      "param": []
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "read_container_data",
+        "versionId": "1"
+      },
+      "param": []
     },
     "clientAnnotations": {
       "isEditedByUser": true
