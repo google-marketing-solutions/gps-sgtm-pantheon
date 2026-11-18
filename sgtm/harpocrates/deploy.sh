@@ -73,6 +73,38 @@ if [ -z "$SGTM_SERVICE_ACCOUNT" ]; then
   read -p "Enter the Service Account email running your sGTM container: " SGTM_SERVICE_ACCOUNT
 fi
 
+# --- Optional, Opt-In Usage Telemetry ---
+# Nothing is sent unless the user explicitly opts in. See the "Usage
+# Telemetry" section of README.md for exactly what is sent.
+save_to_env() {
+  # Remembers a setting in .env (if it exists) so the next run does not ask again.
+  if [ -f ".env" ] && [ -n "$2" ] && ! grep -q "^$1=" .env; then
+    echo "$1=$2" >> .env
+  fi
+}
+
+if [ -z "$TELEMETRY_OPT_IN" ]; then
+  echo ""
+  echo "Optional: help Google understand how this solution is used."
+  echo "If you opt in, one usage event is sent after a successful deployment."
+  echo "It contains only the Google Ads Customer ID and/or GTM container ID"
+  echo "you enter below. No keys, values, or project details are ever sent."
+  read -p "Share usage telemetry with Google? [y/N]: " TELEMETRY_ANSWER
+  if [[ "$TELEMETRY_ANSWER" =~ ^[Yy]([Ee][Ss])?$ ]]; then
+    TELEMETRY_OPT_IN="true"
+  else
+    TELEMETRY_OPT_IN="false"
+  fi
+  save_to_env "TELEMETRY_OPT_IN" "$TELEMETRY_OPT_IN"
+fi
+
+if [ "$TELEMETRY_OPT_IN" = "true" ] && [ -z "$GOOGLE_ADS_CUSTOMER_ID" ] && [ -z "$GTM_CONTAINER_ID" ]; then
+  read -p "Google Ads Customer ID (XXX-XXX-XXXX, optional): " GOOGLE_ADS_CUSTOMER_ID
+  read -p "GTM server container ID (GTM-XXXXXXX, optional): " GTM_CONTAINER_ID
+  save_to_env "GOOGLE_ADS_CUSTOMER_ID" "$GOOGLE_ADS_CUSTOMER_ID"
+  save_to_env "GTM_CONTAINER_ID" "$GTM_CONTAINER_ID"
+fi
+
 # --- Validation ---
 if [ -z "$PROJECT_ID" ]; then
   echo "Error: Google Cloud project ID is required."
@@ -159,6 +191,14 @@ gcloud run services add-iam-policy-binding "$CLOUD_RUN_SERVICE" \
   --project="$PROJECT_ID" \
   --member="serviceAccount:$SGTM_SERVICE_ACCOUNT" \
   --role="roles/run.invoker" >/dev/null 2>&1 || true
+
+# --- Step 4: Optional Usage Telemetry (Opt-In, Never Fails the Deployment) ---
+if [ "$TELEMETRY_OPT_IN" = "true" ] && [ -f "telemetry.js" ] && command -v node >/dev/null 2>&1; then
+  TELEMETRY_OPT_IN="$TELEMETRY_OPT_IN" \
+    GOOGLE_ADS_CUSTOMER_ID="$GOOGLE_ADS_CUSTOMER_ID" \
+    GTM_CONTAINER_ID="$GTM_CONTAINER_ID" \
+    node telemetry.js 2>/dev/null || true
+fi
 
 echo ""
 echo "=================================================================="

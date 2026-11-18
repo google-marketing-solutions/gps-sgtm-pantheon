@@ -98,6 +98,8 @@ chmod +x deploy.sh
 4.  Deploys the `decryptValue` Cloud Function with `--no-allow-unauthenticated` (blocking all unauthenticated internet traffic).
 5.  Grants your sGTM Service Account the `roles/cloudfunctions.invoker` and `roles/run.invoker` roles on `decryptValue`.
 
+`deploy.sh` also asks whether you want to share usage telemetry with Google. This is optional and off unless you answer `y` (see [Usage Telemetry](#-usage-telemetry)).
+
 ### 5. Upload the Template to sGTM
 
 Add the custom variable template to your sGTM container:
@@ -137,6 +139,19 @@ The script automatically reads your existing `.env`, detects your sGTM Cloud Run
 2.  Click the three dots (**⋮**) in the top-right corner → select **Import** → choose the updated `encryptedValue.tpl` file → click **Save**.
 3.  Click **Submit** → **Publish** to publish your container.
     *(No changes are needed on your existing Variable—it automatically uses the pre-populated Service Account and reads `encryptedValueEventData` from the incoming event.)*
+
+---
+
+## 📊 Usage Telemetry
+
+Usage telemetry is **optional and off by default**. It helps Google understand how widely this solution is used.
+
+*   **When it is sent:** only if you opt in, once after each successful `./deploy.sh` run, from the machine running the script. The deployed Cloud Function and the sGTM template never send telemetry.
+*   **What is sent:** the solution name (`sGTM Pantheon`), a random event ID, and the Google Ads Customer ID and/or GTM container ID you choose to enter. If you enter neither, nothing is sent.
+*   **What is never sent:** your `DECRYPTION_KEY`, `IV`, encrypted or decrypted values, Google Cloud project ID, or Service Account email.
+*   **How to control it:** answer the `deploy.sh` prompt, or set `TELEMETRY_OPT_IN=true` or `TELEMETRY_OPT_IN=false` in `.env` (your answer is saved there). To opt out later, set `TELEMETRY_OPT_IN=false`.
+
+The event is sent by [`telemetry.js`](./telemetry.js) to Google Analytics using the [Tadau](https://github.com/google-marketing-solutions/tadau) event format. It needs Node.js 18+ on the machine running `deploy.sh`; if Node.js is missing or the request fails, the deployment continues normally.
 
 ---
 
