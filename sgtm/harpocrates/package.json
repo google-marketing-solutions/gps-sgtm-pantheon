@@ -7,8 +7,7 @@
     "node": "18"
   },
   "scripts": {
-    "start": "functions-framework --target=decryptValue",
-    "test": "node test_encrypt.js && node test_telemetry.js"
+    "start": "functions-framework --target=decryptValue"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.0.0"

@@ -81,8 +81,7 @@ how widely these solutions are used.
 
 - **How to opt in:** every template in this repository has a "Usage telemetry
   (optional)" section with a "Share usage telemetry with Google" checkbox. It
-  is unticked unless you tick it. [Harpocrates](./sgtm/harpocrates/README.md)
-  also asks once when you run its `deploy.sh`.
+  is unticked unless you tick it.
 - **What is sent:** the solution name, a random event ID, the ID of your
   server container and, only if you enter it, your Google Ads Customer ID.
 - **What is never sent:** event data, user data, or anything the template
