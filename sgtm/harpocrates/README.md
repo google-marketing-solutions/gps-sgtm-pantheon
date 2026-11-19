@@ -140,6 +140,12 @@ The script automatically reads your existing `.env`, detects your sGTM Cloud Run
 
 ---
 
+## 📊 Usage Telemetry
+
+Usage telemetry is **optional and off by default**. The variable template (`encryptedValue.tpl`) has a "Share usage telemetry with Google" checkbox, unticked by default. If you tick it, the template sends at most one usage event per day per server instance, containing the solution name, your server container ID and, if you enter it, your Google Ads Customer ID. Encrypted and decrypted values are never sent, and neither `deploy.sh` nor the Cloud Function sends any telemetry. See [Usage telemetry](../../README.md#usage-telemetry) in the main README.
+
+---
+
 ## 🧪 Test Your Setup
 
 After publishing your container, you can test the setup by sending a request to your sGTM endpoint to verify that the encrypted value is being decrypted end-to-end.
